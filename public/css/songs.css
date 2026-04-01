@@ -1,0 +1,43 @@
+body {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+body.dark {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+body.light {
+  background-color: #f5f5f5;
+  color: #121212;
+}
+
+.table {
+  background-color: transparent;
+  color: inherit;
+}
+
+.table thead th {
+  color: #1db954;
+  border-bottom: 2px solid #1db954;
+}
+
+.table.is-striped tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.table.is-hoverable tbody tr:hover {
+  background-color: rgba(29, 185, 84, 0.15);
+}
+
+.input, .select select {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  border-color: #444;
+}
+
+.box {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
