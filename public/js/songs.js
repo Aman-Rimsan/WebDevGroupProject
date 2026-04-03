@@ -7,7 +7,8 @@ createApp({
       filterGenre: '',
       filterArtist: '',
       searchQuery: '',
-      newSong: { title: '', artist: '', genre: '', duration: '', year: '' }
+      newSong: { title: '', artist: '', genre: '', duration: '', year: '' },
+      idToRemove: ''
     };
   },
 
@@ -136,6 +137,14 @@ createApp({
             <div class="column"><input class="input" placeholder="Year" v-model="newSong.year"/></div>
           </div>
           <button class="button is-success" @click="addSong">Add Song</button>
+        </div>
+
+        <!-- Remove Song by ID Form -->
+        <div class="box mt-5">
+          <h2 class="subtitle">Remove a Song by ID</h2>
+          <div class="columns">
+            <div class="column"><input class="input" placeholder="Id" v-model="idToRemove"/></div>
+          <button class="button is-danger" @click="removeSong(idToRemove)">Remove Song</button>
         </div>
 
         <!-- D3 Chart -->
