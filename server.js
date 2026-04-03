@@ -29,7 +29,7 @@ function readCSV() {
 }
 
 function writeCSV(songs) {
-  const headers = ['id', 'title', 'artist', 'genre', 'duration', 'album', 'year'];
+  const headers = ['id', 'title', 'artist', 'genre', 'duration', 'year', 'album'];
   const lines = [headers.join(','), ...songs.map(s => headers.map(h => s[h] ?? '').join(','))];
   fs.writeFileSync(CSV_PATH, lines.join('\n'), 'utf8');
 }
