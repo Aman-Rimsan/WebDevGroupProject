@@ -5,7 +5,7 @@
 // you can install express from this servers terminal by doing: npm install
 // after that you run this in the terminal: node server.js
 // if done properlly youll see something like this: Server running on http://localhost:3000
-// visit the link and you should be good to go
+// visit this link and youre good to go: http://localhost:3000/songs.html
 
 
 const express = require('express');
