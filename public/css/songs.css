@@ -3,6 +3,15 @@ body {
   color: #1db954;
 }
 
+.navbar {
+  background-color: #121212;
+}
+
+.navbar .title,
+.navbar .navbar-item {
+  color: #ffffff !important;
+}
+
 body.dark {
   background-color: #121212;
   color: #ffffff;
