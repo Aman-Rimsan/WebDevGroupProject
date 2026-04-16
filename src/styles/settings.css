@@ -1,5 +1,3 @@
-
-
 :root {
   --base-font-size: 16px;
   --accent: #5c6bc0;
@@ -20,7 +18,7 @@
   --transition: 0.2s ease;
 }
 
-body.dark {
+body.settings-page.dark {
   --bg:#0f1117;
   --surface:#1a1d27;
   --surface-2: #22263a;
@@ -35,7 +33,7 @@ body.dark {
 
 html { font-size: var(--base-font-size); }
 
-body {
+body.settings-page {
   font-family: 'DM Sans', sans-serif;
   background:  var(--bg);
   color: var(--text-primary);
@@ -43,17 +41,15 @@ body {
   min-height: 100vh;
 }
 
-/* Layout */
-.settings-page { min-height: 100vh; }
+body.settings-page .settings-page { min-height: 100vh; }
 
-.container {
+body.settings-page .container {
   max-width: 720px;
   margin: 0 auto;
   padding: 0 1.25rem;
 }
 
-/* Header */
-.settings-header {
+body.settings-page .settings-header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 2rem 0 1.5rem;
@@ -62,13 +58,13 @@ body {
   transition: background var(--transition), border-color var(--transition);
 }
 
-.settings-header-inner {
+body.settings-page .settings-header-inner {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
 }
 
-.settings-eyebrow {
+body.settings-page .settings-eyebrow {
   font-family:'DM Mono', monospace;
   font-size: 0.7rem;
   letter-spacing: 0.12em;
@@ -77,31 +73,29 @@ body {
   margin-bottom: 0.2rem;
 }
 
-.settings-title {
+body.settings-page .settings-title {
   font-size: 1.9rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
-/*  Main  */
-.settings-main {
+body.settings-page .settings-main {
   padding-bottom: 3rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-/*  Cards  */
-.settings-card {
+body.settings-page .settings-card {
   background: var(--surface);
-  border:        1px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
   transition: background var(--transition), border-color var(--transition);
 }
 
-.settings-card-label {
+body.settings-page .settings-card-label {
   font-family:'DM Mono', monospace;
   font-size: 0.68rem;
   text-transform: uppercase;
@@ -113,8 +107,7 @@ body {
   transition: background var(--transition), border-color var(--transition);
 }
 
-/*  Rows  */
-.settings-row {
+body.settings-page .settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -123,26 +116,26 @@ body {
   transition: background var(--transition);
 }
 
-.settings-row--column {
+body.settings-page .settings-row--column {
   flex-direction: column;
   align-items: flex-start;
 }
 
-.settings-row-info {
+body.settings-page .settings-row-info {
   display: flex;
   align-items: center;
   gap: 0.85rem;
   flex: 1;
 }
 
-.settings-row-icon {
+body.settings-page .settings-row-icon {
   font-size: 1.35rem;
   flex-shrink: 0;
   width: 2.2rem;
   text-align: center;
 }
 
-.settings-row-title {
+body.settings-page .settings-row-title {
   font-weight: 500;
   font-size: 0.95rem;
   color: var(--text-primary);
@@ -150,33 +143,32 @@ body {
   display: block;
 }
 
-.settings-row-desc {
+body.settings-page .settings-row-desc {
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
 
-.font-preview {
+body.settings-page .font-preview {
   font-family: 'DM Mono', monospace;
   color: var(--accent);
   transition: font-size 0.15s;
 }
 
-.settings-divider {
+body.settings-page .settings-divider {
   height: 1px;
   background: var(--border);
   margin: 0 1.35rem;
   transition: background var(--transition);
 }
 
-/*  Font size controls  */
-.font-size-controls {
+body.settings-page .font-size-controls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
 
-.font-btn {
+body.settings-page .font-btn {
   font-family: 'DM Mono', monospace;
   font-size: 0.8rem;
   font-weight: 500;
@@ -189,16 +181,16 @@ body {
   transition: background var(--transition), transform 0.1s;
 }
 
-.font-btn:hover:not(:disabled) {
+body.settings-page .font-btn:hover:not(:disabled) {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
   transform: translateY(-1px);
 }
 
-.font-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+body.settings-page .font-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.font-size-value {
+body.settings-page .font-size-value {
   font-family: 'DM Mono', monospace;
   font-size: 0.85rem;
   min-width: 3.2rem;
@@ -207,14 +199,13 @@ body {
   font-weight: 500;
 }
 
-/*  Color swatches  */
-.color-swatches {
+body.settings-page .color-swatches {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 
-.color-swatch {
+body.settings-page .color-swatch {
   width: 2rem;
   height: 2rem;
   border-radius: 4px;
@@ -223,18 +214,17 @@ body {
   transition: border-color 0.15s;
 }
 
-.color-swatch:hover { border-color: var(--text-secondary); }
-.color-swatch--active { border-color: var(--text-primary) !important; }
+body.settings-page .color-swatch:hover { border-color: var(--text-secondary); }
+body.settings-page .color-swatch--active { border-color: var(--text-primary) !important; }
 
-/*  Actions  */
-.settings-actions {
+body.settings-page .settings-actions {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 0.75rem;
 }
 
-.btn-reset {
+body.settings-page .btn-reset {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.88rem;
   font-weight: 500;
@@ -247,13 +237,13 @@ body {
   transition: background var(--transition), color var(--transition);
 }
 
-.btn-reset:hover {
+body.settings-page .btn-reset:hover {
   background: var(--surface);
   color: var(--text-primary);
   border-color: var(--text-secondary);
 }
 
-.btn-save {
+body.settings-page .btn-save {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.88rem;
   font-weight:600;
@@ -270,12 +260,11 @@ body {
   transition: opacity 0.15s, transform 0.15s;
 }
 
-.btn-save:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
-.btn-save:disabled { opacity: 0.6;  cursor: not-allowed; }
+body.settings-page .btn-save:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+body.settings-page .btn-save:disabled { opacity: 0.6;  cursor: not-allowed; }
 
-/* ── Responsive ── */
 @media (max-width: 520px) {
-  .settings-header-inner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
-  .settings-row { flex-wrap: wrap; }
-  .color-swatches { gap: 0.4rem; }
+  body.settings-page .settings-header-inner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  body.settings-page .settings-row { flex-wrap: wrap; }
+  body.settings-page .color-swatches { gap: 0.4rem; }
 }

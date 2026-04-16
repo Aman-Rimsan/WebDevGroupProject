@@ -1,0 +1,22 @@
+{
+  "name": "webdevgroupproject-vite",
+  "private": true,
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "vite build",
+    "start": "cross-env NODE_ENV=production node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "fuse.js": "^7.0.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "cross-env": "^7.0.3",
+    "vite": "^6.1.0"
+  }
+}
