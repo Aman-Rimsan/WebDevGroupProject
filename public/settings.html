@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-switch@2.0.4/dist/css/bulma-switch.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/settings.css" />
+</head>
+<body>
+
+  <div class="settings-page">
+
+    <!-- Header -->
+    <header class="settings-header">
+      <div class="container">
+        <div class="settings-header-inner">
+          <div>
+            <p class="settings-eyebrow">Preferences</p>
+            <h1 class="settings-title">Settings</h1>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="container settings-main">
+
+      <!-- Profile -->
+      <section class="settings-card">
+        <div class="settings-card-label">Profile</div>
+        <div class="settings-row settings-row--column" style="gap: 1rem;">
+          <div class="field" style="width: 100%">
+            <label class="settings-row-title">Display Name</label>
+            <input id="profileName" class="input" type="text" placeholder="Your name" />
+          </div>
+          <div class="field" style="width: 100%">
+            <label class="settings-row-title">Bio</label>
+            <textarea id="profileDescription" class="textarea" placeholder="A short description..." rows="3"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Appearance -->
+      <section class="settings-card">
+        <div class="settings-card-label">Appearance</div>
+
+        <div class="settings-row">
+            <div class="settings-row-info">
+                <div class="settings-row-icon" id="themeIcon">☀️</div>
+                <div>
+                <p class="settings-row-title">Dark Mode</p>
+                <p class="settings-row-desc">Switch between light and dark interface</p>
+                </div>
+            </div>
+
+            <label>
+                <input class="color-swatch" id="dark-mode-switch" type="checkbox">
+            </label>
+        </div>
+
+        <div class="settings-divider"></div>
+
+        <div class="settings-row settings-row--column">
+          <div class="settings-row-info">
+            <div class="settings-row-icon">🔤</div>
+            <div>
+              <p class="settings-row-title">Font Size</p>
+              <p class="settings-row-desc">
+                Preview: <span id="fontPreview" class="font-preview">Enjoy Your Music Experience</span>
+              </p>
+            </div>
+          </div>
+          <div class="font-size-controls">
+            <button class="font-btn" id="fontDown">A−</button>
+            <span class="font-size-value" id="fontSizeLabel">16px</span>
+            <button class="font-btn" id="fontUp">A+</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Accent Color -->
+      <section class="settings-card">
+        <div class="settings-card-label">Accent Color</div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-icon">🎨</div>
+            <div>
+              <p class="settings-row-title">Theme Color</p>
+              <p class="settings-row-desc">Choose your accent color</p>
+            </div>
+          </div>
+          <div class="color-swatches" id="colorSwatches"></div>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <div class="settings-actions">
+        <button class="btn-reset" id="btnReset">Reset defaults</button>
+        <button class="btn-save" id="btnSave">Save Settings</button>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="./js/settings.js"></script>
+</body>
+</html>
