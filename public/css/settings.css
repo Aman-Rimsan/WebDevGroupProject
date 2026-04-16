@@ -273,20 +273,6 @@ body {
 .btn-save:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
 .btn-save:disabled              { opacity: 0.6;  cursor: not-allowed; }
 
-/*  Bulma Switch overrides  */
-/*
-.switch[type="checkbox"] + label::before {
-  background:  var(--surface-2);
-  border:      1px solid var(--border);
-}
-
-.switch[type="checkbox"]:checked + label::before {
-  background:   var(--accent) !important;
-  border-color: var(--accent) !important;
-}
-
-.switch[type="checkbox"] + label { font-size: 0; }
-
 /* ── Responsive ── */
 @media (max-width: 520px) {
   .settings-header-inner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
