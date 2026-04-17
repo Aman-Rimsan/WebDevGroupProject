@@ -28,7 +28,7 @@ body.theme-dark {
   --shadow:   0 10px 30px rgba(0, 0, 0, 0.28);
 }
 
-/*  Base resets (complement Bulma)  */
+/* Base resets (complement Bulma)  */
 html { font-size: var(--base-font-size); }
 
 body {
@@ -100,7 +100,6 @@ textarea.textarea:focus {
   border:        1px solid var(--border);
   border-radius: var(--radius);
   box-shadow:    var(--shadow);
-  overflow:      hidden;
 }
 
 /* Buttons */
@@ -113,7 +112,10 @@ textarea.textarea:focus {
 }
 .button.is-success:hover:not(:disabled):not([disabled]),
 .button.is-primary:hover:not(:disabled):not([disabled]),
-.button.is-link:hover:not(:disabled):not([disabled]) { filter: brightness(0.94); }
+.button.is-link:hover:not(:disabled):not([disabled]) {
+  background: var(--accent);
+  filter: brightness(0.94);
+}
 
 /* Disabled accent buttons — grey out regardless of accent color */
 .button.is-success:disabled,
@@ -151,13 +153,6 @@ textarea.textarea:focus {
   color:        var(--text);
 }
 
-/* Notifications used as panel cards */
-.notification {
-  background:    var(--surface-2);
-  border:        1px solid var(--border);
-  border-radius: 14px;
-}
-
 /* Labels */
 .label { color: var(--text); }
 
@@ -169,17 +164,17 @@ textarea.textarea:focus {
 
 /*  Navbar  */
 .app-navbar {
-  background:      rgba(15, 17, 23, 0.88);
+  background:      rgba(15, 17, 23);
   backdrop-filter: blur(16px);
-  border-bottom:   1px solid rgba(255,255,255,0.06);
+  border-bottom:   1px solid rgba(255, 255, 255, 0.05);
   color:           #fff;
   padding-top:     0.6rem;
   padding-bottom:  0.6rem;
 }
-.app-navbar .navbar-item,
-.app-navbar .navbar-link { color: #fff; }
+.app-navbar .navbar-item { color: #fff; }
+/* Mobile dropdown */
 .app-navbar .navbar-menu {
-  background: rgba(15, 17, 23, 0.98); /* mobile dropdown */
+  background: rgba(15, 17, 23, 0.98);
 }
 
 /* Fix Bulma overriding navbar-end background to white */
@@ -233,7 +228,6 @@ textarea.textarea:focus {
   flex-wrap:       wrap;
   margin-bottom:   1.25rem;
   min-width:       0;
-  overflow:        hidden;
 }
 
 /* The text block (kicker + title + subtitle) must always be a column */
@@ -358,15 +352,6 @@ textarea.textarea:focus {
 .swatch:hover    { transform: translateY(-1px); }
 .swatch.is-active { border-color: var(--text); }
 
-/*  Icon buttons  */
-.icon-btn {
-  display:         inline-flex !important;
-  align-items:     center;
-  justify-content: center;
-  padding:         0.3rem !important;
-  line-height:     1 !important;
-}
-.icon-btn svg { display: block; flex-shrink: 0; }
 
 /*  D3 chart containers  */
 .d3-chart-container {
@@ -379,58 +364,22 @@ textarea.textarea:focus {
 .d3-chart-container .bar { cursor: pointer; transition: fill-opacity 150ms ease; }
 .d3-chart-container .bar:hover { fill-opacity: 1 !important; }
 
-/*  Soft pill (result count badge)  */
-.soft-pill {
-  display:      inline-flex;
-  align-items:  center;
-  gap:          0.4rem;
-  padding:      0.45rem 0.85rem;
-  border-radius: 999px;
-  background:   var(--surface);
-  border:       1px solid var(--border);
-  color:        var(--muted);
-  font-size:    0.9rem;
-}
 
-/* GenreBadges tag overrides */
-.tags { flex-wrap: wrap; gap: 0.35rem; }
 
-/* Misc helper */
+/*  Misc helper  */
 a { color: inherit; }
 button, input, select, textarea { font: inherit; }
 
-/* Playlist dropdown (Songs page) */
-.dropdown-content {
-  background:    var(--surface);
-  border:        1px solid var(--border);
-  box-shadow:    var(--shadow);
-  border-radius: var(--radius-sm);
-}
-.dropdown-item {
-  color: var(--text);
-}
-.dropdown-item:hover {
-  background: var(--surface-2);
-  color:      var(--text);
-}
-.dropdown-item.has-text-success {
-  color: var(--accent) !important;
-}
 
-/* Playlist card */
-.playlist-card {
-  cursor:     pointer;
-  transition: transform 180ms ease, box-shadow 180ms ease;
-}
 
-/* Responsive columns */
+/*  Responsive columns  */
 @media (max-width: 768px) {
   .columns:not(.is-mobile) { display: block; }
   .columns:not(.is-mobile) > .column { width: 100%; }
 }
 
 
-/* Artist picker dropdown. Shared with SongSearchPicker's visual style. */
+/* Artist picker dropdown — shared with SongSearchPicker's visual style. */
 .artist-picker { position: relative; }
 
 .artist-picker-avatar {
