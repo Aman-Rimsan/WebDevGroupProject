@@ -6,7 +6,7 @@ Ensure Node.js is installed on your system.
 
 ---
 
-### 1. Clone the repository or Extract the submitted zip file
+### 1. Clone the repository or extract the submitted zip file
 
 ```
 git clone https://github.com/Aman-Rimsan/WebDevGroupProject.git
