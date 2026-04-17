@@ -11,7 +11,18 @@ Contributions:
 Name: Adlene Oudahmane
 Banner ID: 100870058
 Contributions:
-
+- Settings Page Implementation
+  • Implemented the complete Settings page  (settings.html, settings.css, settings.js)
+  • Developed settings.js with state variables (isDarkMode, fontSize, accentColor)
+  • Implemented functionality to load and apply saved preferences from localStorage
+  • Built toggleTheme() to switch dark mode, update document.body, save to localStorage, and POST to /api/settings
+  • Created reusable rendering functions for UI updates
+  • Dynamic DOM updates for all settings sections
+- Styling and Theme System
+  • Implemented settings.css with theme variables, light/dark mode styles, and Bulma framework
+- User Profile Customization
+  • Created profile section for editing name and bio
+  • Added Dark Mode Feature Implementation, font size and accent color customization, applied across buttons, highlights, and charts
 ---
 
 ---
