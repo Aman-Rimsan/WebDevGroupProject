@@ -492,3 +492,73 @@ textarea.textarea:focus {
     color: #fff;
   }
 }
+
+/* ── D3 Chart containers ──────────────────────────────────────────── */
+.d3-chart-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.d3-donut-container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.d3-chart-container svg {
+  display: block;
+}
+
+.d3-chart-container .bar {
+  cursor: pointer;
+  transition: fill-opacity 150ms ease;
+}
+
+.d3-chart-container .bar:hover {
+  fill-opacity: 1 !important;
+}
+
+/* ── SVG Icon buttons ─────────────────────────────────────────────── */
+.icon-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem !important;
+  line-height: 1 !important;
+}
+
+.icon-btn svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ── Stat card icon ───────────────────────────────────────────────── */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stat-icon {
+  color: var(--accent);
+  margin-bottom: 0.15rem;
+  opacity: 0.85;
+}
+
+/* ── App brand SVG ────────────────────────────────────────────────── */
+.app-brand-svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Page fade-in (jQuery target) ─────────────────────────────────── */
+.page-fade-in {
+  /* Base state before jQuery fadeIn */
+}
