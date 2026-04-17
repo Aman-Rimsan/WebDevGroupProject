@@ -101,6 +101,9 @@ function handlePlay() {
   border-radius: 12px;
   transition: background 150ms ease;
   position: relative;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .song-row:hover {
@@ -262,5 +265,15 @@ function handlePlay() {
 .song-row-action-danger:hover {
   background: rgba(239, 68, 68, 0.12);
   color: #ef4444;
+}
+
+/* ── Mobile: hide secondary columns so row fits in viewport ─────────── */
+@media (max-width: 600px) {
+  .song-row { gap: 0.5rem; }
+
+  .song-row-genre,
+  .song-row-duration { display: none; }
+
+  .song-row-actions { opacity: 1; } /* always show on touch */
 }
 </style>

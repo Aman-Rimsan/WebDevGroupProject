@@ -50,7 +50,7 @@
     </div>
 
     <!-- Charts -->
-    <div class="columns is-variable is-4">
+    <div class="columns is-variable is-4 is-multiline">
       <div class="column">
         <div class="box">
           <SectionTitle icon="bar-chart">Top genres in catalog</SectionTitle>

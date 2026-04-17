@@ -100,6 +100,7 @@ textarea.textarea:focus {
   border:        1px solid var(--border);
   border-radius: var(--radius);
   box-shadow:    var(--shadow);
+  overflow:      hidden;
 }
 
 /* Buttons */
@@ -232,6 +233,25 @@ textarea.textarea:focus {
   gap:             1rem;
   flex-wrap:       wrap;
   margin-bottom:   1.25rem;
+  min-width:       0;
+  overflow:        hidden;
+}
+
+/* The text block (kicker + title + subtitle) must always be a column */
+.page-hero > div:first-child {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  min-width:      0;
+  flex:           1 1 0;
+}
+
+/* On mobile the hero stacks vertically and buttons go full-width */
+@media (max-width: 640px) {
+  .page-hero { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .page-hero > div:last-child { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .page-hero > div:last-child .button { flex: 1 1 auto; justify-content: center; }
+  .page-title { font-size: clamp(1.4rem, 6vw, 2rem); }
 }
 .page-kicker {
   font-family:     "DM Mono", monospace;
@@ -402,4 +422,10 @@ button, input, select, textarea { font: inherit; }
 .playlist-card {
   cursor:     pointer;
   transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+/* ── Responsive columns ────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .columns:not(.is-mobile) { display: block; }
+  .columns:not(.is-mobile) > .column { width: 100%; }
 }
