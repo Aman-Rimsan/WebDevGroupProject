@@ -58,5 +58,18 @@ Contributions:
 Name: Rishi Patel
 Banner ID: 100920317
 Contributions:
-
----
+Idea of making some sort of Spotify clone web app
+server.js — Express API Routes
+- created server.js
+- node fucntionality, specifically express
+- Implemented GET, POST, DELETE for /api/songs (CSV-based)
+- Implemented GET, POST for /api/profile and /api/settings
+- Later refactored by a teammate to support the Vue/Vite architecture, JSON song catalog, and playlist endpoints
+songs.js — AJAX wiring
+- Wired up all three API calls (GET, POST, DELETE) to the Express backend
+- Later replaced by a teammate with a Vue store at `src/store/songs.js`
+songs.html — UI improvements
+- Updated colour scheme for better readability and viewing experience
+songs.csv — Refactored
+- Removed quotation marks, replaced multi-artist commas with & symbols, and swapped album/year column order
+- Later replaced by an api and json reformat to work better with vue
