@@ -4,7 +4,18 @@ WebDev Group Project – Contributions
 Name: Brandan Stradling
 Banner ID: 100915823
 Contributions:
-
+- Project Planning and Documentation
+  • Led project planning and created the group outline document
+  • Defined work split, file structure, build order, and technology requirement mapping
+- Songs Page Implementation
+  • Created the initial structure for the Songs page (songs.html, songs.css, songs.js)
+  • Built the songs table UI displaying title, artist, genre, duration, album, and year
+  • Implemented add/remove song functionality with dynamic table updates
+  • Built filtering by genre, artist, and title search
+- Data Preparation
+  • Sourced and prepared songs.csv with 100 songs for initial use
+  • Cleaned dataset to include only relevant columns (id, title, artist, genre, duration, album, year)
+  • Manually genre-tagged entries for use in the table
 ---
 
 ---
