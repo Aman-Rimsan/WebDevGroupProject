@@ -80,8 +80,8 @@ textarea.textarea:focus {
   border-color:   var(--border);
   vertical-align: middle;
 }
-.table.is-striped tbody tr:nth-child(even) { background: var(--surface-2); }
-.table.is-hoverable tbody tr:hover          { background: rgba(29,185,84,0.05); }
+.table.is-striped tbody tr:nth-child(even) { background: var(--surface-2) !important; }
+.table.is-hoverable tbody tr:hover          { background: var(--surface-3) !important; }
 
 /* Boxes / cards */
 .box {
@@ -140,7 +140,9 @@ textarea.textarea:focus {
   background:      rgba(15, 17, 23, 0.88);
   backdrop-filter: blur(16px);
   border-bottom:   1px solid rgba(255,255,255,0.06);
-  color: #fff;
+  color:           #fff;
+  padding-top:     0.6rem;
+  padding-bottom:  0.6rem;
 }
 .app-navbar .navbar-item,
 .app-navbar .navbar-link { color: #fff; }
