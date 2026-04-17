@@ -6,38 +6,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
-const ROOT          = __dirname;
-const DATA_DIR      = path.join(ROOT, 'data');
-const SONGS_PATH    = path.join(DATA_DIR, 'songs.csv');
-const PROFILE_PATH  = path.join(DATA_DIR, 'profile.json');
-const SETTINGS_PATH = path.join(DATA_DIR, 'settings.json');
+const ROOT           = __dirname;
+const DATA_DIR       = path.join(ROOT, 'data');
+const SONGS_PATH     = path.join(DATA_DIR, 'songs.json');
+const PROFILE_PATH   = path.join(DATA_DIR, 'profile.json');
+const SETTINGS_PATH  = path.join(DATA_DIR, 'settings.json');
 const PLAYLISTS_PATH = path.join(DATA_DIR, 'playlists.json');
-const DIST_DIR      = path.join(ROOT, 'dist');
-const INDEX_HTML    = path.join(ROOT, 'index.html');
+const DIST_DIR       = path.join(ROOT, 'dist');
+const INDEX_HTML     = path.join(ROOT, 'index.html');
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function readCSV() {
-  const raw = fs.readFileSync(SONGS_PATH, 'utf8').trim();
-  if (!raw) return [];
-  const lines = raw.split(/\r?\n/);
-  const headers = lines[0].split(',');
-  return lines.slice(1).filter(Boolean).map((line) => {
-    const values = line.split(',');
-    return Object.fromEntries(headers.map((header, index) => [header, values[index] ?? '']));
-  });
-}
-
-function writeCSV(songs) {
-  const headers = ['id', 'title', 'artist', 'genre', 'duration', 'year', 'album'];
-  const lines = [
-    headers.join(','),
-    ...songs.map((song) => headers.map((h) => song[h] ?? '').join(',')),
-  ];
-  fs.writeFileSync(SONGS_PATH, lines.join('\n'), 'utf8');
-}
-
 function readJSON(filePath, fallback) {
   try {
     if (!fs.existsSync(filePath)) return fallback;
@@ -53,49 +33,13 @@ function writeJSON(filePath, value) {
   fs.writeFileSync(filePath, JSON.stringify(value, null, 2), 'utf8');
 }
 
-// ── Songs ─────────────────────────────────────────────────────────────────────
+// Preload the song catalog once at startup — it's read-only
+const SONGS = readJSON(SONGS_PATH, []);
+console.log(`Loaded ${SONGS.length} songs from catalog`);
+
+// ── Songs (read-only) ─────────────────────────────────────────────────────────
 app.get('/api/songs', (req, res) => {
-  try {
-    res.json(readCSV());
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to read songs' });
-  }
-});
-
-app.post('/api/songs', (req, res) => {
-  try {
-    const songs = readCSV();
-    const maxId = songs.reduce((max, song) => Math.max(max, Number.parseInt(song.id, 10) || 0), 0);
-    const payload = req.body || {};
-    const newSong = {
-      id:       String(maxId + 1),
-      title:    payload.title    ?? '',
-      artist:   payload.artist   ?? '',
-      genre:    payload.genre    ?? '',
-      duration: payload.duration ?? '',
-      year:     payload.year     ?? '',
-      album:    payload.album    ?? '',
-    };
-    songs.push(newSong);
-    writeCSV(songs);
-    res.status(201).json(newSong);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to add song' });
-  }
-});
-
-app.delete('/api/songs/:id', (req, res) => {
-  try {
-    const songs    = readCSV();
-    const filtered = songs.filter((song) => String(song.id) !== String(req.params.id));
-    if (filtered.length === songs.length) {
-      return res.status(404).json({ error: 'Song not found' });
-    }
-    writeCSV(filtered);
-    res.status(204).send();
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete song' });
-  }
+  res.json(SONGS);
 });
 
 // ── Profile / Settings ────────────────────────────────────────────────────────
@@ -130,7 +74,6 @@ app.post('/api/playlists', (req, res) => {
   try {
     const playlists = readJSON(PLAYLISTS_PATH, []);
     const payload   = req.body || {};
-    // Reject if id already exists (idempotency guard)
     if (playlists.some(p => p.id === payload.id)) {
       return res.status(409).json({ error: 'Playlist already exists' });
     }
@@ -155,11 +98,7 @@ app.put('/api/playlists/:id', (req, res) => {
     if (index === -1) {
       return res.status(404).json({ error: 'Playlist not found' });
     }
-    const updated = {
-      ...playlists[index],
-      ...req.body,
-      id: req.params.id, // id is immutable
-    };
+    const updated = { ...playlists[index], ...req.body, id: req.params.id };
     playlists[index] = updated;
     writeJSON(PLAYLISTS_PATH, playlists);
     res.json(updated);

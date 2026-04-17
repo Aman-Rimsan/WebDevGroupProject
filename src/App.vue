@@ -34,20 +34,30 @@
       </div>
     </nav>
 
-    <main class="section" style="padding-top:2rem;padding-bottom:3rem;">
+    <main class="section app-main" :class="{ 'has-player': hasPlayer }">
       <div class="container page-fade-in">
         <router-view />
       </div>
     </main>
+
+    <MiniPlayer />
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import $ from 'jquery';
 import SvgIcon from './components/SvgIcon.vue';
+import MiniPlayer from './components/MiniPlayer.vue';
+import { currentSong } from './store/player.js';
+import { loadSongs } from './store/songs.js';
+
+const hasPlayer = computed(() => currentSong.value !== null);
 
 onMounted(() => {
+  // Preload the song catalog once for the whole app
+  loadSongs().catch(() => {});
+
   // jQuery: navbar burger toggle
   $('#navBurger').on('click', function () {
     $(this).toggleClass('is-active');
@@ -58,3 +68,16 @@ onMounted(() => {
   $('.page-fade-in').hide().fadeIn(350);
 });
 </script>
+
+<style scoped>
+.app-main {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+  transition: padding-bottom 250ms ease;
+}
+
+/* Leave room for the fixed mini-player so content doesn't hide behind it */
+.app-main.has-player {
+  padding-bottom: 120px;
+}
+</style>

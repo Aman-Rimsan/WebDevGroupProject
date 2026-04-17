@@ -1,7 +1,11 @@
 <template>
   <div class="section-stack">
 
-    <PageHero kicker="Profile" title="Your music home" subtitle="Keep track of favorite songs, artists, and playlists in one place.">
+    <PageHero
+      kicker="Profile"
+      title="Your music home"
+      subtitle="Your favorite songs, artists, and playlists in one place."
+    >
       <router-link class="button is-light" to="/settings">
         <SvgIcon name="settings" :size="14" class="mr-2" />Open settings
       </router-link>
@@ -20,28 +24,28 @@
       <div class="columns is-variable is-3 mt-5">
         <div class="column">
           <div class="stat-card">
-            <SvgIcon name="person"    :size="22" class="stat-icon" />
-            <span class="stat-value">{{ stats.artists }}</span>
-            <span class="stat-label">Artists favorited</span>
+            <SvgIcon name="music" :size="22" class="stat-icon" />
+            <span class="stat-value">{{ favoriteSongsData.length }}</span>
+            <span class="stat-label">Favorite songs</span>
           </div>
         </div>
         <div class="column">
           <div class="stat-card">
-            <SvgIcon name="music"     :size="22" class="stat-icon" />
-            <span class="stat-value">{{ stats.songs }}</span>
-            <span class="stat-label">Songs favorited</span>
+            <SvgIcon name="person" :size="22" class="stat-icon" />
+            <span class="stat-value">{{ profile.favoriteArtists.length }}</span>
+            <span class="stat-label">Favorite artists</span>
           </div>
         </div>
         <div class="column">
           <div class="stat-card">
-            <SvgIcon name="library"   :size="22" class="stat-icon" />
+            <SvgIcon name="queue" :size="22" class="stat-icon" />
             <span class="stat-value">{{ playlists.length }}</span>
             <span class="stat-label">Playlists</span>
           </div>
         </div>
         <div class="column">
           <div class="stat-card">
-            <SvgIcon name="group"     :size="22" class="stat-icon" />
+            <SvgIcon name="group" :size="22" class="stat-icon" />
             <span class="stat-value">0</span>
             <span class="stat-label">Followers</span>
           </div>
@@ -49,155 +53,114 @@
       </div>
     </div>
 
-    <!-- Favorite genres donut (only when there's data) -->
-    <div class="box" v-if="stats.songs > 0">
+    <!-- Favorite songs -->
+    <div class="box">
+      <SectionTitle icon="heart-filled">Favorite songs</SectionTitle>
+
+      <SongSearchPicker
+        :songs="songsCatalog"
+        :exclude-ids="profile.favoriteSongIds"
+        placeholder="Search the catalog to add a favorite song…"
+        class="mt-3"
+        @pick="handleFavoriteSong"
+      />
+
+      <div class="mt-3" style="padding: 0.25rem 0;">
+        <SongRow
+          v-for="song in favoriteSongsData"
+          :key="song.id"
+          :song="song"
+          :is-liked="true"
+          :show-remove="true"
+          remove-title="Remove from favorites"
+          :show-genre="false"
+          :show-duration="false"
+          :play-context="{ songs: favoriteSongsData, index: favoriteSongsData.indexOf(song), label: 'Your favorite songs' }"
+          @remove="removeFavoriteSong(song.id)"
+          @toggle-like="toggleFavoriteSong(song.id)"
+        />
+        <p v-if="favoriteSongsData.length === 0" class="has-text-centered py-4 is-size-7" style="color:var(--muted);">
+          No favorite songs yet. Search above to add one.
+        </p>
+      </div>
+    </div>
+
+    <!-- Favorite artists -->
+    <div class="box">
+      <SectionTitle icon="person">Favorite artists</SectionTitle>
+
+      <div class="field has-addons mt-3">
+        <div class="control is-expanded has-icons-left">
+          <input
+            v-model="artistInput"
+            class="input"
+            type="text"
+            placeholder="Type an artist name and press Add"
+            list="catalog-artists"
+            @keyup.enter="addArtist"
+          />
+          <datalist id="catalog-artists">
+            <option v-for="artist in uniqueArtists.slice(0, 200)" :key="artist" :value="artist" />
+          </datalist>
+          <span class="icon is-left" style="color:var(--muted);">
+            <SvgIcon name="search" :size="14" />
+          </span>
+        </div>
+        <div class="control">
+          <button class="button is-success" :disabled="!artistInput.trim()" @click="addArtist">Add</button>
+        </div>
+      </div>
+
+      <div class="mt-3" style="padding: 0.25rem 0;">
+        <ArtistRow
+          v-for="artist in profile.favoriteArtists"
+          :key="artist"
+          :artist="artist"
+          @remove="removeFavoriteArtist(artist)"
+        />
+        <p v-if="profile.favoriteArtists.length === 0" class="has-text-centered py-4 is-size-7" style="color:var(--muted);">
+          No favorite artists yet. Add one above.
+        </p>
+      </div>
+    </div>
+
+    <!-- Playlists -->
+    <div class="box">
+      <SectionTitle icon="queue">Playlists</SectionTitle>
+      <div class="field has-addons mt-3">
+        <div class="control is-expanded">
+          <input
+            v-model="playlistInput"
+            class="input"
+            type="text"
+            placeholder="New playlist name"
+            @keyup.enter="handleCreatePlaylist"
+          />
+        </div>
+        <div class="control">
+          <button class="button is-success" :disabled="!playlistInput.trim()" @click="handleCreatePlaylist">Add</button>
+        </div>
+      </div>
+
+      <div v-if="playlists.length > 0" class="columns is-multiline is-variable is-3 mt-3">
+        <div v-for="pl in playlists" :key="pl.id" class="column is-6">
+          <PlaylistCard :playlist="pl" :songs="songsCatalog" />
+        </div>
+      </div>
+      <p v-else class="is-size-7 mt-3" style="color:var(--muted);">No playlists yet.</p>
+
+      <router-link to="/playlists" class="button is-light is-fullwidth mt-3" style="font-size:0.875rem;">
+        <SvgIcon name="queue" :size="13" class="mr-2" />Manage all playlists
+      </router-link>
+    </div>
+
+    <!-- Genres donut chart -->
+    <div class="box" v-if="favoriteSongsData.length > 0">
       <SectionTitle icon="pie-chart">Favorite Genres</SectionTitle>
       <p class="is-size-7 mb-3 mt-1" style="color:var(--muted);">Derived from your favorited songs. Hover a slice to inspect.</p>
       <D3DonutChart :data="donutData" empty-message="Add favorite songs to see your genre breakdown." />
     </div>
 
-    <!-- Main two-column area -->
-    <div class="columns is-variable is-4">
-
-      <!-- Left: artists + songs -->
-      <div class="column">
-        <div class="section-stack">
-
-          <!-- Favorite artists -->
-          <div class="box">
-            <SectionTitle icon="person">Favorite artists</SectionTitle>
-            <div class="field has-addons mt-3">
-              <div class="control is-expanded">
-                <div class="select is-fullwidth">
-                  <select v-model="artistSelect">
-                    <option value="">Choose from catalog…</option>
-                    <option v-for="artist in uniqueArtists" :key="artist" :value="artist">{{ artist }}</option>
-                  </select>
-                </div>
-              </div>
-              <div class="control">
-                <input v-model="artistInput" class="input" type="text" placeholder="Or type a name" style="border-left:none;" />
-              </div>
-              <div class="control">
-                <button class="button is-success" @click="addArtist">Add</button>
-              </div>
-            </div>
-
-            <table class="table is-fullwidth mt-3">
-              <thead><tr><th>Artist</th><th class="has-text-right">Remove</th></tr></thead>
-              <tbody>
-                <tr v-for="(artist, index) in profile.favoriteArtists" :key="artist + index">
-                  <td>{{ artist }}</td>
-                  <td class="has-text-right">
-                    <RemoveButton title="Remove artist" @click="removeArtist(index)" />
-                  </td>
-                </tr>
-                <tr v-if="profile.favoriteArtists.length === 0">
-                  <td colspan="2" class="has-text-centered has-text-grey">No favorite artists yet.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Favorite songs -->
-          <div class="box">
-            <SectionTitle icon="music">Favorite songs</SectionTitle>
-
-            <div class="field mt-3">
-              <label class="label is-small">Choose from catalog</label>
-              <div class="control">
-                <div class="select is-fullwidth">
-                  <select v-model="songSelect">
-                    <option value="">Select a song…</option>
-                    <option v-for="song in songOptions" :key="song.value" :value="song.value">{{ song.label }}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="notification" style="background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:1rem;">
-              <p class="is-size-7 has-text-weight-semibold mb-2">Or add a custom song</p>
-              <div class="columns is-variable is-2">
-                <div class="column">
-                  <input v-model="customTitle"  class="input" type="text" placeholder="Song title" />
-                </div>
-                <div class="column">
-                  <input v-model="customArtist" class="input" type="text" placeholder="Artist" />
-                </div>
-              </div>
-            </div>
-
-            <div class="field is-grouped mt-3">
-              <div class="control">
-                <button class="button is-success" @click="addFavoriteSong">Add song</button>
-              </div>
-              <p class="is-size-7 is-align-self-center" style="color:var(--muted);">Duplicates are ignored.</p>
-            </div>
-
-            <table class="table is-fullwidth mt-3">
-              <thead><tr><th>Title</th><th>Artist</th><th class="has-text-right">Remove</th></tr></thead>
-              <tbody>
-                <tr v-for="(song, index) in favoriteSongRows" :key="song.label + index">
-                  <td>{{ song.title }}</td>
-                  <td>{{ song.artist }}</td>
-                  <td class="has-text-right">
-                    <RemoveButton title="Remove song" @click="removeSong(index)" />
-                  </td>
-                </tr>
-                <tr v-if="favoriteSongRows.length === 0">
-                  <td colspan="3" class="has-text-centered has-text-grey">No favorite songs yet.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Right: playlists + catalog info -->
-      <div class="column is-4">
-        <div class="section-stack">
-
-          <div class="box">
-            <SectionTitle icon="playlist">Playlists</SectionTitle>
-            <div class="field has-addons mt-3">
-              <div class="control is-expanded">
-                <input v-model="playlistInput" class="input" type="text" placeholder="New playlist name" />
-              </div>
-              <div class="control">
-                <button class="button is-success" @click="handleCreatePlaylist">Add</button>
-              </div>
-            </div>
-
-            <div class="mt-3">
-              <PlaylistCard
-                v-for="pl in playlists"
-                :key="pl.id"
-                :playlist="pl"
-                :songs="songs"
-                class="mb-3"
-              />
-              <p v-if="playlists.length === 0" class="is-size-7 mt-2" style="color:var(--muted);">No playlists yet.</p>
-            </div>
-            <router-link to="/playlists" class="button is-light is-fullwidth mt-3" style="font-size:0.875rem;">
-              <SvgIcon name="queue" :size="13" class="mr-2" />Manage all playlists
-            </router-link>
-          </div>
-
-          <div class="box">
-            <SectionTitle icon="library">Song catalog</SectionTitle>
-            <div v-if="loading"      class="is-size-7 mt-2" style="color:var(--muted);">Loading songs…</div>
-            <div v-else-if="loadError" class="has-text-danger is-size-7 mt-2">{{ loadError }}</div>
-            <div v-else>
-              <p class="is-size-7 mt-2 mb-3" style="color:var(--muted);">{{ songOptions.length }} songs available.</p>
-              <GenreBadges :items="uniqueArtists.slice(0, 8)" />
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
   </div>
 </template>
 
@@ -205,86 +168,74 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import $ from 'jquery';
 
-import PageHero      from '../components/PageHero.vue';
-import SectionTitle  from '../components/SectionTitle.vue';
-import SvgIcon       from '../components/SvgIcon.vue';
-import RemoveButton  from '../components/RemoveButton.vue';
-import GenreBadges   from '../components/GenreBadges.vue';
-import D3DonutChart  from '../components/D3DonutChart.vue';
-import PlaylistCard  from '../components/PlaylistCard.vue';
+import PageHero         from '../components/PageHero.vue';
+import SectionTitle     from '../components/SectionTitle.vue';
+import SvgIcon          from '../components/SvgIcon.vue';
+import SongRow          from '../components/SongRow.vue';
+import SongSearchPicker from '../components/SongSearchPicker.vue';
+import ArtistRow        from '../components/ArtistRow.vue';
+import D3DonutChart     from '../components/D3DonutChart.vue';
+import PlaylistCard     from '../components/PlaylistCard.vue';
 
-import { fetchSongs, loadJSON, postJSON, saveJSON } from '../api';
-import { playlists, loadPlaylists, createPlaylist, deletePlaylist } from '../store/playlists.js';
+import { loadJSON } from '../api';
+import {
+  songs as songsCatalog, uniqueArtists, songsById, loadSongs,
+} from '../store/songs.js';
+import {
+  profile, favoriteSongIds,
+  loadProfile, toggleFavoriteSong, removeFavoriteSong,
+  addFavoriteArtist, removeFavoriteArtist,
+} from '../store/profile.js';
+import { playlists, loadPlaylists, createPlaylist } from '../store/playlists.js';
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-const STORAGE_KEYS = { profile: 'spotifyClone.profile', settings: 'spotifyClone.settings' };
+// ── Local input state ─────────────────────────────────────────────────────────
+const SETTINGS_KEY = 'spotifyClone.settings';
 const DEFAULT_SETTINGS = {
   displayName: 'Guest',
   profileDescription: "We don't know much about Guest, but we're sure they have great music taste!",
 };
+const settings = reactive(loadJSON(SETTINGS_KEY, DEFAULT_SETTINGS));
 
-// ── State ─────────────────────────────────────────────────────────────────────
-const profile  = reactive(loadJSON(STORAGE_KEYS.profile, { favoriteSongs: [], favoriteArtists: [] }));
-const settings = reactive(loadJSON(STORAGE_KEYS.settings, DEFAULT_SETTINGS));
-
-const songs     = ref([]);
-const loading   = ref(true);
-const loadError = ref('');
-
-const playlistInput = ref('');
-const artistSelect  = ref('');
 const artistInput   = ref('');
-const songSelect    = ref('');
-const customTitle   = ref('');
-const customArtist  = ref('');
+const playlistInput = ref('');
 
 // ── Computed ──────────────────────────────────────────────────────────────────
 const displayName = computed(() => settings.displayName?.trim() || 'Guest');
 const bio         = computed(() => settings.profileDescription?.trim() || DEFAULT_SETTINGS.profileDescription);
-const initials    = computed(() =>
-  String(displayName.value || 'G').split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0]).join('').toUpperCase() || 'G'
+const initials = computed(() =>
+  String(displayName.value || 'G').split(/\s+/).filter(Boolean).slice(0, 2)
+    .map(p => p[0]).join('').toUpperCase() || 'G'
 );
 
-const uniqueArtists = computed(() =>
-  [...new Set(songs.value.map(s => s.artist).filter(Boolean))].sort((a, b) => a.localeCompare(b))
-);
-const songOptions = computed(() =>
-  songs.value.map(s => ({ label: `${s.title} - ${s.artist}`, value: `${s.title} - ${s.artist}` }))
-);
-const stats = computed(() => ({
-  artists:   profile.favoriteArtists.length,
-  songs:     profile.favoriteSongs.length,
-}));
-const favoriteSongRows = computed(() =>
-  profile.favoriteSongs.map(entry => {
-    const idx = entry.indexOf(' - ');
-    if (idx === -1) return { title: entry, artist: '', label: entry };
-    return { title: entry.slice(0, idx), artist: entry.slice(idx + 3), label: entry };
-  })
+// Hydrate favorite song IDs into full song objects from the catalog
+const favoriteSongsData = computed(() =>
+  profile.value.favoriteSongIds
+    .map(id => songsById.value.get(id))
+    .filter(Boolean)
 );
 
-// Donut chart data: derive genre from catalog for each favorited song
+// Donut: group favorite songs by genre
 const donutData = computed(() => {
-  const songMap = new Map(songs.value.map(s => [`${s.title} - ${s.artist}`, s.genre]));
-  const counts  = new Map();
-  for (const entry of profile.favoriteSongs) {
-    const genre = songMap.get(entry) || 'Unknown';
-    counts.set(genre, (counts.get(genre) || 0) + 1);
+  const counts = new Map();
+  for (const song of favoriteSongsData.value) {
+    const g = song.genre || 'Unknown';
+    counts.set(g, (counts.get(g) || 0) + 1);
   }
   return [...counts.entries()].map(([label, value]) => ({ label, value }));
 });
 
-// ── Persistence ───────────────────────────────────────────────────────────────
-function persistProfile() {
-  const payload = {
-    favoriteSongs:   [...profile.favoriteSongs],
-    favoriteArtists: [...profile.favoriteArtists],
-  };
-  saveJSON(STORAGE_KEYS.profile, payload);
-  postJSON('/api/profile', payload).catch(() => {});
+// ── Actions ───────────────────────────────────────────────────────────────────
+function handleFavoriteSong(song) {
+  toggleFavoriteSong(song.id);
 }
 
-// ── Actions ───────────────────────────────────────────────────────────────────
+function addArtist() {
+  const name = artistInput.value.trim();
+  if (!name) return;
+  addFavoriteArtist(name);
+  artistInput.value = '';
+}
+
 async function handleCreatePlaylist() {
   const name = playlistInput.value.trim();
   if (!name) return;
@@ -292,44 +243,11 @@ async function handleCreatePlaylist() {
   playlistInput.value = '';
 }
 
-function addFavoriteSong() {
-  const dropdown = songSelect.value.trim();
-  const manual   = customTitle.value.trim() && customArtist.value.trim()
-    ? `${customTitle.value.trim()} - ${customArtist.value.trim()}`
-    : '';
-  const label = dropdown || manual;
-  if (!label || profile.favoriteSongs.includes(label)) return;
-  profile.favoriteSongs.push(label);
-  persistProfile();
-  songSelect.value = '';
-  customTitle.value = '';
-  customArtist.value = '';
-}
-function removeSong(index) { profile.favoriteSongs.splice(index, 1); persistProfile(); }
-
-function addArtist() {
-  const value = (artistSelect.value || artistInput.value).trim();
-  if (!value || profile.favoriteArtists.includes(value)) return;
-  profile.favoriteArtists.push(value);
-  persistProfile();
-  artistSelect.value = '';
-  artistInput.value  = '';
-}
-function removeArtist(index) { profile.favoriteArtists.splice(index, 1); persistProfile(); }
-
 // ── Lifecycle ─────────────────────────────────────────────────────────────────
 onMounted(async () => {
-  loading.value   = true;
-  loadError.value = '';
-  try {
-    songs.value = await fetchSongs();
-    await loadPlaylists();
-  } catch (err) {
-    console.error('Failed to load songs from server', err);
-    loadError.value = 'Could not load the song catalog.';
-  } finally {
-    loading.value = false;
-  }
+  await loadSongs();
+  await loadPlaylists();
+  loadProfile();
 
   // jQuery: staggered fade-in for stat cards
   $('.stat-card').css({ opacity: 0 });

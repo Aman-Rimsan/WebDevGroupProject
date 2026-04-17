@@ -65,12 +65,11 @@ import SvgIcon      from '../components/SvgIcon.vue';
 import PlaylistCard from '../components/PlaylistCard.vue';
 
 import { playlists, playlistsLoading, playlistsError, loadPlaylists, createPlaylist } from '../store/playlists.js';
-import { fetchSongs } from '../api.js';
+import { songs, loadSongs } from '../store/songs.js';
 
 const router     = useRouter();
 const newName    = ref('');
 const createError = ref('');
-const songs      = ref([]);
 
 async function handleCreate() {
   const name = newName.value.trim();
@@ -88,10 +87,6 @@ async function handleCreate() {
 
 onMounted(async () => {
   await loadPlaylists();
-  try {
-    songs.value = await fetchSongs();
-  } catch (e) {
-    console.error('Failed to load songs for duration display', e);
-  }
+  await loadSongs();
 });
 </script>
