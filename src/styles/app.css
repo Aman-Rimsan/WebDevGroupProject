@@ -1,0 +1,351 @@
+/* ── CSS custom properties ─────────────────────────────────────────── */
+:root {
+  --base-font-size: 16px;
+  --accent:      #1db954;
+  --accent-soft: rgba(29, 185, 84, 0.16);
+  --bg:          #f4f6f8;
+  --surface:     #ffffff;
+  --surface-2:   #f0f2f5;
+  --surface-3:   #e8ebef;
+  --text:        #111827;
+  --muted:       #6b7280;
+  --border:      #d7dce3;
+  --shadow:      0 10px 30px rgba(15, 23, 42, 0.08);
+  --radius:      20px;
+  --radius-sm:   12px;
+  --transition:  180ms ease;
+}
+
+/* Dark mode overrides — these can't be handled by Bulma */
+body.theme-dark {
+  --bg:       #0f1117;
+  --surface:  #171b24;
+  --surface-2:#1e2430;
+  --surface-3:#242b3a;
+  --text:     #f3f4f6;
+  --muted:    #9ca3af;
+  --border:   #2d3445;
+  --shadow:   0 10px 30px rgba(0, 0, 0, 0.28);
+}
+
+/* ── Base resets (complement Bulma) ────────────────────────────────── */
+html { font-size: var(--base-font-size); }
+
+body {
+  font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, rgba(29, 185, 84, 0.06), transparent 32%), var(--bg);
+  color: var(--text);
+  transition: background var(--transition), color var(--transition);
+  min-height: 100vh;
+}
+
+/* ── Bulma overrides for dark-mode / accent theming ────────────────── */
+/* Form controls */
+input.input,
+.select select,
+textarea.textarea {
+  background:   var(--surface);
+  border-color: var(--border);
+  color:        var(--text);
+  box-shadow:   none;
+  border-radius: 14px !important;
+}
+
+input.input::placeholder,
+textarea.textarea::placeholder {
+  color: var(--muted);
+}
+
+input.input:focus,
+.select select:focus,
+textarea.textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.15rem var(--accent-soft);
+}
+
+.select::after { border-color: var(--accent) !important; }
+
+/* Tables */
+.table {
+  background:  transparent;
+  color:       var(--text);
+}
+.table thead th {
+  color:        var(--accent);
+  border-color: var(--border);
+  white-space:  nowrap;
+}
+.table td,
+.table th {
+  border-color:   var(--border);
+  vertical-align: middle;
+}
+.table.is-striped tbody tr:nth-child(even) { background: var(--surface-2) !important; }
+.table.is-hoverable tbody tr:hover          { background: var(--surface-3) !important; }
+
+/* Boxes / cards */
+.box {
+  background:    var(--surface);
+  color:         var(--text);
+  border:        1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow:    var(--shadow);
+}
+
+/* Buttons */
+.button.is-success,
+.button.is-primary,
+.button.is-link {
+  background:   var(--accent);
+  border-color: transparent;
+}
+.button.is-success:hover,
+.button.is-primary:hover,
+.button.is-link:hover { filter: brightness(0.94); }
+
+.button.is-light {
+  background:   var(--surface-2);
+  color:        var(--text);
+  border-color: var(--border);
+}
+.button.is-danger.is-light {
+  background:   rgba(239, 68, 68, 0.10);
+  color:        #ef4444;
+  border-color: rgba(239, 68, 68, 0.12);
+}
+.button.is-static {
+  background:   var(--surface-2);
+  border-color: var(--border);
+  color:        var(--text);
+}
+
+/* Notifications used as panel cards */
+.notification {
+  background:    var(--surface-2);
+  border:        1px solid var(--border);
+  border-radius: 14px;
+}
+
+/* Labels */
+.label { color: var(--text); }
+
+/* Tags / badges */
+.tag.is-light {
+  background: var(--surface-2);
+  color:      var(--text);
+}
+
+/* ── Navbar ────────────────────────────────────────────────────────── */
+.app-navbar {
+  background:      rgba(15, 17, 23, 0.88);
+  backdrop-filter: blur(16px);
+  border-bottom:   1px solid rgba(255,255,255,0.06);
+  color:           #fff;
+  padding-top:     0.6rem;
+  padding-bottom:  0.6rem;
+}
+.app-navbar .navbar-item,
+.app-navbar .navbar-link { color: #fff; }
+.app-navbar .navbar-menu {
+  background: rgba(15, 17, 23, 0.98); /* mobile dropdown */
+}
+
+.app-brand {
+  display:     flex;
+  align-items: center;
+  gap:         0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.app-brand-svg { color: var(--accent); flex-shrink: 0; }
+
+.nav-chip {
+  border-radius: 999px;
+  padding-inline: 1rem;
+  border: 1px solid transparent;
+}
+.nav-chip.router-link-active {
+  background:   rgba(29, 185, 84, 0.14);
+  color:        #fff;
+  border-color: rgba(29, 185, 84, 0.35);
+}
+
+/* ── Page hero ─────────────────────────────────────────────────────── */
+.page-hero {
+  display:         flex;
+  align-items:     flex-start;
+  justify-content: space-between;
+  gap:             1rem;
+  flex-wrap:       wrap;
+  margin-bottom:   1.25rem;
+}
+.page-kicker {
+  font-family:     "DM Mono", monospace;
+  font-size:       0.72rem;
+  letter-spacing:  0.14em;
+  text-transform:  uppercase;
+  color:           var(--accent);
+  margin-bottom:   0.35rem;
+}
+.page-title {
+  font-size:   clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.1;
+  font-weight: 700;
+  margin:      0;
+  color:       var(--text);
+}
+.page-subtitle {
+  margin-top: 0.4rem;
+  color:      var(--muted);
+  max-width:  64ch;
+}
+
+/* ── Section stack (vertical gap) ──────────────────────────────────── */
+/* Replaces .section-stack — use Bulma .mb-4 / gap utilities inline, */
+/* but keep the class for the outer wrapper for consistent spacing.    */
+.section-stack { display: grid; gap: 1.25rem; }
+
+/* ── Stat cards ────────────────────────────────────────────────────── */
+.stat-card {
+  display:          flex;
+  flex-direction:   column;
+  align-items:      center;
+  gap:              0.25rem;
+  padding:          1rem;
+  border-radius:    18px;
+  background:       linear-gradient(180deg, var(--surface), var(--surface-2));
+  border:           1px solid var(--border);
+  text-align:       center;
+}
+.stat-value {
+  display:     block;
+  font-size:   1.6rem;
+  font-weight: 700;
+  color:       var(--text);
+}
+.stat-label {
+  display:    block;
+  margin-top: 0.2rem;
+  color:      var(--muted);
+  font-size:  0.88rem;
+}
+.stat-icon {
+  color:         var(--accent);
+  opacity:       0.85;
+  margin-bottom: 0.15rem;
+}
+
+/* ── Profile avatar ────────────────────────────────────────────────── */
+.profile-avatar {
+  width:       74px;
+  height:      74px;
+  border-radius: 22px;
+  display:     grid;
+  place-items: center;
+  background:  var(--accent-soft);
+  color:       var(--accent);
+  font-weight: 700;
+  font-size:   1.4rem;
+  flex-shrink: 0;
+}
+.profile-name {
+  font-size:   2rem;
+  font-weight: 700;
+  margin:      0;
+  color:       var(--text);
+}
+.profile-bio {
+  color:     var(--muted);
+  max-width: 70ch;
+}
+
+/* ── Section title (used by SectionTitle component) ────────────────── */
+.section-title {
+  font-size:     1.05rem;
+  font-weight:   700;
+  margin-bottom: 1rem;
+  color:         var(--text);
+}
+
+/* ── Colour swatches (Settings) ────────────────────────────────────── */
+.swatch-row {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       0.65rem;
+}
+.swatch {
+  width:         2.1rem;
+  height:        2.1rem;
+  border-radius: 999px;
+  border:        2px solid transparent;
+  box-shadow:    inset 0 0 0 1px rgba(255,255,255,0.26);
+  cursor:        pointer;
+  transition:    transform var(--transition), border-color var(--transition);
+}
+.swatch:hover    { transform: translateY(-1px); }
+.swatch.is-active { border-color: var(--text); }
+
+/* ── Icon buttons ──────────────────────────────────────────────────── */
+.icon-btn {
+  display:         inline-flex !important;
+  align-items:     center;
+  justify-content: center;
+  padding:         0.3rem !important;
+  line-height:     1 !important;
+}
+.icon-btn svg { display: block; flex-shrink: 0; }
+
+/* ── D3 chart containers ───────────────────────────────────────────── */
+.d3-chart-container {
+  width:      100%;
+  overflow-x: auto;
+  padding:    0.25rem 0;
+}
+.d3-donut-container { display: flex; align-items: flex-start; }
+.d3-chart-container svg  { display: block; }
+.d3-chart-container .bar { cursor: pointer; transition: fill-opacity 150ms ease; }
+.d3-chart-container .bar:hover { fill-opacity: 1 !important; }
+
+/* ── Soft pill (result count badge) ────────────────────────────────── */
+.soft-pill {
+  display:      inline-flex;
+  align-items:  center;
+  gap:          0.4rem;
+  padding:      0.45rem 0.85rem;
+  border-radius: 999px;
+  background:   var(--surface);
+  border:       1px solid var(--border);
+  color:        var(--muted);
+  font-size:    0.9rem;
+}
+
+/* ── GenreBadges tag overrides ─────────────────────────────────────── */
+.tags { flex-wrap: wrap; gap: 0.35rem; }
+
+/* ── Misc helper ────────────────────────────────────────────────────── */
+a { color: inherit; }
+button, input, select, textarea { font: inherit; }
+
+/* ── Playlist dropdown (Songs page) ────────────────────────────────── */
+.dropdown-content {
+  background:    var(--surface);
+  border:        1px solid var(--border);
+  box-shadow:    var(--shadow);
+  border-radius: var(--radius-sm);
+}
+.dropdown-item {
+  color: var(--text);
+}
+.dropdown-item:hover {
+  background: var(--surface-2);
+  color:      var(--text);
+}
+.dropdown-item.has-text-success {
+  color: var(--accent) !important;
+}
+
+/* ── Playlist card (used in grid and profile sidebar) ──────────────── */
+.playlist-card {
+  cursor:     pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
