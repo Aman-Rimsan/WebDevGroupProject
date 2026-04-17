@@ -33,7 +33,7 @@ html { font-size: var(--base-font-size); }
 
 body {
   font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top, rgba(29, 185, 84, 0.06), transparent 32%), var(--bg);
+  background: radial-gradient(circle at top, var(--accent-soft), transparent 32%), var(--bg);
   color: var(--text);
   transition: background var(--transition), color var(--transition);
   min-height: 100vh;
@@ -137,7 +137,7 @@ textarea.textarea:focus {
 
 /* ── Navbar ────────────────────────────────────────────────────────── */
 .app-navbar {
-  background:      rgba(15, 17, 23, 0.88);
+  background:      rgba(15, 17, 23);
   backdrop-filter: blur(16px);
   border-bottom:   1px solid rgba(255,255,255,0.06);
   color:           #fff;
@@ -146,8 +146,31 @@ textarea.textarea:focus {
 }
 .app-navbar .navbar-item,
 .app-navbar .navbar-link { color: #fff; }
+/* For the mobile dropdown */
 .app-navbar .navbar-menu {
-  background: rgba(15, 17, 23, 0.98); /* mobile dropdown */
+  background: rgba(15, 17, 23);
+}
+
+/* Fix Bulma overriding navbar-end background to white */
+.app-navbar .navbar-end,
+.app-navbar .navbar-start,
+.app-navbar .navbar-brand {
+  background: transparent;
+}
+
+/* Fix Bulma's hover turning navbar items white/blue — keep our dark style */
+.app-navbar .navbar-item:hover,
+.app-navbar .navbar-item:focus,
+.app-navbar a.navbar-item:hover,
+.app-navbar a.navbar-item:focus {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+/* Active pill hover keeps the accent tint, doesn't flicker */
+.app-navbar .nav-chip.router-link-active:hover {
+  background: var(--accent-soft);
+  color: #fff;
 }
 
 .app-brand {
@@ -165,9 +188,9 @@ textarea.textarea:focus {
   border: 1px solid transparent;
 }
 .nav-chip.router-link-active {
-  background:   rgba(29, 185, 84, 0.14);
+  background:   var(--accent-soft);
   color:        #fff;
-  border-color: rgba(29, 185, 84, 0.35);
+  border-color: var(--accent);
 }
 
 /* ── Page hero ─────────────────────────────────────────────────────── */
