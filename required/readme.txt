@@ -2,7 +2,7 @@ Note | Spotify Clone - How to Run
 
 Ensure Node.js is installed on your system.
 
-1. Clone the repository:
+1. Clone the repository or extract the submitted zip file:
    git clone https://github.com/Aman-Rimsan/WebDevGroupProject.git
 
 2. Navigate into the project folder:
