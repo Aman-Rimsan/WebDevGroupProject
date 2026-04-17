@@ -51,8 +51,17 @@ Contributions:
 Name: Ifeanyichukwu Obinelo
 Banner ID: 100901295
 Contributions:
-
 ---
+- Initialized the Vue 3 + Vite + Express.js project structure
+- Added 10K+ songs to the catalog including metadata (title, artist, genre, duration) and audio URLs, seeded
+- Implemented all four shared reactive stores (songs, playlists, profile, player) using Vue 3 Composition API
+- Built the global mini music player component with audio playback, scrubable progress bar, and queue auto-advance
+- Implemented the playlist system end-to-end: creation, detail view, adding/removing songs, play-all functionality, and server persistence
+- Built the fuzzy search system using Fuse.js across the Songs page, song picker, and artist picker
+- Created two D3.js data visualizations: an animated bar chart (used for genres and top artists) and an interactive donut chart with jQuery-powered hover tooltips
+- Built all reusable components: SongRow, SongSearchPicker, ArtistRow, MiniPlayer, PlaylistCard, SvgIcon, PageHero, SectionTitle, D3BarChart, D3DonutChart
+- Replaced all fetch() calls with jQuery $.ajax throughout the API layer
+- Implemented responsive mobile layout
 
 ---
 Name: Rishi Patel

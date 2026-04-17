@@ -1,0 +1,50 @@
+AI Prompts Used in Development
+================================
+
+1. How do I set up Vue Router with dynamic route segments in Vue 3?
+
+2. How do I animate an equalizer like Spotify does for audio playback using CSS keyframes?
+
+3. What is the best way to share reactive state across multiple Vue components without Vuex or Pinia?
+
+4. How do I use the HTML5 Audio API to play an MP3 preview URL and track playback progress?
+
+5. How do I build a fuzzy search input with Fuse.js in a Vue 3 Composition API component?
+
+6. How do I use D3.js to draw an animated bar chart that reads CSS custom properties for colors?
+
+7. How do I create a donut chart in D3 with a hover tooltip that updates text in the center?
+
+8. How do I use jQuery $.ajax instead of fetch for API calls in a Vue 3 project?
+
+9. How do I implement a persistent mini music player fixed to the bottom of the screen in Vue?
+
+10. How do I support dark mode in a Vue app using CSS custom properties and a body class toggle?
+
+11. How do I make an Express.js server serve both a REST API and a Vite dev server simultaneously?
+
+12. How do I persist user settings (dark mode, font size, accent color) to localStorage and restore them on page load before the app mounts?
+
+13. How do I implement a live search dropdown that stays open after the user clicks a result?
+
+14. How do I use Vue's transition component to animate a player sliding up from the bottom of the screen?
+
+15. How do I infer an artist's profile picture from their songs when no dedicated artist image is available?
+
+16. How do I preload a large JSON catalog on the server once at startup instead of reading it on every request?
+
+17. How do I make Bulma's navbar burger toggle work with jQuery on a Vue SPA?
+
+18. How do I apply staggered CSS animations to stat cards on page load without using JavaScript timers?
+
+19. How do I prevent a Bulma has-addons input group from using rounded corners on the joined edges?
+
+20. How do I override Bulma's hardcoded hover background on buttons so it respects a dynamic accent color?
+
+21. How do I make absolutely positioned dropdown results not get clipped by a parent with overflow hidden?
+
+22. How do I implement a play queue that auto-advances through songs when each 30-second preview ends?
+
+23. How do I use Vue's computed properties to derive a map of song IDs to song objects for fast lookup?
+
+24. How do I make a responsive song row that hides secondary columns like genre and duration on mobile?
