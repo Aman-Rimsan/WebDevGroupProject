@@ -1,6 +1,43 @@
-# Installation
+# WebDev Group Project
 
-1. Install Node.js.
-2. Run `npm install` in the project folder.
-3. Start the app with `npm start`.
-4. Open `http://localhost:3000`.
+## Note | Spotify Clone - How to Run
+
+Ensure Node.js is installed on your system.
+
+---
+
+### 1. Clone the repository
+
+```
+git clone https://github.com/Aman-Rimsan/WebDevGroupProject.git
+```
+
+### 2. Navigate into the project folder
+
+```
+cd WebDevGroupProject/
+```
+
+### 3. Install dependencies
+
+```
+npm install
+```
+
+### 4. Build the frontend
+
+```
+npm run build
+```
+
+### 5. Start the server
+
+```
+npm start
+```
+
+### 6. Open in browser
+
+```
+http://localhost:3000
+```

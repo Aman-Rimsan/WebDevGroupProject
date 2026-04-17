@@ -1,0 +1,51 @@
+WebDev Group Project – Contributions
+
+---
+Name: Brandan Stradling
+Banner ID: 100915823
+Contributions:
+
+---
+
+---
+Name: Adlene Oudahmane
+Banner ID: 100870058
+Contributions:
+
+---
+
+---
+Name: Amanulla Mohammed Rimsan
+Banner ID: 100920512
+Contributions:
+- Implemented the complete Profile page (profile.html, profile.css, profile.js)
+- Developed full frontend UI using HTML, CSS (Bulma framework), and custom styling
+- Implemented dynamic client-side functionality using JavaScript and jQuery:
+  • Add/remove favorite artists, songs, and playlists
+  • Dynamic DOM updates for all profile sections
+  • Real-time updating of statistics (artist count, song count, playlist count)
+  • Dropdown population for songs and artists from API data
+- Integrated AJAX functionality:
+  • GET request to /api/songs to retrieve song data from backend
+  • POST request to /api/profile to save profile data
+- Implemented client-side data persistence using localStorage
+- Built user interaction features with validation and duplicate prevention
+- Created reusable rendering functions for UI updates
+- Connected frontend with backend API endpoints
+- Contributed to project documentation (README.md, readme.txt)
+- Created group_members.html
+---
+
+---
+Name: Ifeanyichukwu Obinelo
+Banner ID: 100901295
+Contributions:
+
+---
+
+---
+Name: Rishi Patel
+Banner ID: 100920317
+Contributions:
+
+---
