@@ -1,96 +1,73 @@
 import $ from 'jquery';
 
-// ── Songs (read-only) ─────────────────────────────────────────────────────────
-export function fetchSongs() {
+// Wrap jQuery $.ajax in a Promise. Used by all API functions below.
+function ajax(options) {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: '/api/songs',
-      method: 'GET',
-      dataType: 'json',
+      ...options,
       success: data => resolve(data),
-      error: (xhr, status, err) => reject(new Error(err || 'Failed to load songs')),
-    });
-  });
-}
-
-// ── Generic JSON POST (profile, settings) ────────────────────────────────────
-export function postJSON(url, payload) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url,
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify(payload),
-      success: () => resolve(),
-      error: xhr => {
-        if (xhr.status === 204) return resolve();
-        reject(new Error(`Request failed for ${url}`));
+      error: (xhr, status, err) => {
+        if (options.allowStatus?.includes(xhr.status)) return resolve();
+        reject(new Error(err || options.errorMsg || 'Request failed'));
       },
     });
   });
 }
 
-// ── Playlists ─────────────────────────────────────────────────────────────────
-export function fetchPlaylists() {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url: '/api/playlists',
-      method: 'GET',
-      dataType: 'json',
-      success: data => resolve(data),
-      error: (xhr, status, err) => reject(new Error(err || 'Failed to load playlists')),
-    });
+export function fetchSongs() {
+  return ajax({ url: '/api/songs', method: 'GET', dataType: 'json', errorMsg: 'Failed to load songs' });
+}
+
+export function postJSON(url, payload) {
+  return ajax({
+    url,
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify(payload),
+    allowStatus: [204],
+    errorMsg: `Request failed for ${url}`,
   });
 }
 
+export function fetchPlaylists() {
+  return ajax({ url: '/api/playlists', method: 'GET', dataType: 'json', errorMsg: 'Failed to load playlists' });
+}
+
 export function apiCreatePlaylist(playlist) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url: '/api/playlists',
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify(playlist),
-      dataType: 'json',
-      success: data => resolve(data),
-      error: (xhr, status, err) => reject(new Error(err || 'Failed to create playlist')),
-    });
+  return ajax({
+    url: '/api/playlists',
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify(playlist),
+    dataType: 'json',
+    errorMsg: 'Failed to create playlist',
   });
 }
 
 export function apiUpdatePlaylist(id, playlist) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url: `/api/playlists/${encodeURIComponent(id)}`,
-      method: 'PUT',
-      contentType: 'application/json',
-      data: JSON.stringify(playlist),
-      dataType: 'json',
-      success: data => resolve(data),
-      error: (xhr, status, err) => reject(new Error(err || 'Failed to update playlist')),
-    });
+  return ajax({
+    url: `/api/playlists/${encodeURIComponent(id)}`,
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify(playlist),
+    dataType: 'json',
+    errorMsg: 'Failed to update playlist',
   });
 }
 
 export function apiDeletePlaylist(id) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      url: `/api/playlists/${encodeURIComponent(id)}`,
-      method: 'DELETE',
-      success: () => resolve(),
-      error: xhr => {
-        if (xhr.status === 204 || xhr.status === 404) return resolve();
-        reject(new Error('Failed to delete playlist'));
-      },
-    });
+  return ajax({
+    url: `/api/playlists/${encodeURIComponent(id)}`,
+    method: 'DELETE',
+    allowStatus: [204, 404],
+    errorMsg: 'Failed to delete playlist',
   });
 }
 
-// ── localStorage helpers ──────────────────────────────────────────────────────
 export function loadJSON(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-    return JSON.parse(raw);
+    return raw ? JSON.parse(raw) : fallback;
   } catch {
     return fallback;
   }

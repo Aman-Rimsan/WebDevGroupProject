@@ -1,27 +1,20 @@
 import { computed, ref } from 'vue';
 import { fetchSongs } from '../api';
 
-// ── State ─────────────────────────────────────────────────────────────────────
-export const songs        = ref([]);
+export const songs = ref([]);
 export const songsLoading = ref(false);
-export const songsError   = ref('');
-let loadPromise = null; // de-dupe concurrent loads
+export const songsError = ref('');
 
-// ── Derived helpers ───────────────────────────────────────────────────────────
+let loadPromise = null;
 
-/**
- * Map of song id -> song object. Memoized via computed.
- */
+// Map of song id → song object, memoised via computed.
 export const songsById = computed(() => {
   const m = new Map();
   for (const s of songs.value) m.set(s.id, s);
   return m;
 });
 
-/**
- * Map of artist name -> first song we've seen for that artist.
- * Used to infer an artist's "picture" from one of their album covers.
- */
+// Map of artist name → their first song, used to infer artist artwork.
 export const artistFirstSong = computed(() => {
   const m = new Map();
   for (const s of songs.value) {
@@ -30,21 +23,11 @@ export const artistFirstSong = computed(() => {
   return m;
 });
 
-/** Sorted unique artist names (for search/filter). */
 export const uniqueArtists = computed(() =>
   [...new Set(songs.value.map(s => s.artist))].sort((a, b) => a.localeCompare(b))
 );
 
-/** Sorted unique genres (for filter dropdowns). */
-export const uniqueGenres = computed(() =>
-  [...new Set(songs.value.map(s => s.genre).filter(Boolean))].sort((a, b) => a.localeCompare(b))
-);
-
-// ── Actions ───────────────────────────────────────────────────────────────────
-
-/**
- * Load the song catalog. Safe to call multiple times — only fetches once.
- */
+// Fetch the catalog once; subsequent calls return the cached promise.
 export async function loadSongs() {
   if (songs.value.length > 0) return songs.value;
   if (loadPromise) return loadPromise;
@@ -53,11 +36,11 @@ export async function loadSongs() {
   songsError.value = '';
 
   loadPromise = fetchSongs()
-    .then((data) => {
+    .then(data => {
       songs.value = data;
       return data;
     })
-    .catch((err) => {
+    .catch(err => {
       console.error('Failed to load songs:', err);
       songsError.value = 'Could not load the song catalog.';
       throw err;
@@ -70,15 +53,7 @@ export async function loadSongs() {
   return loadPromise;
 }
 
-/** Look up a song by id. */
-export function getSong(id) {
-  return songsById.value.get(id) ?? null;
-}
-
-/**
- * Get a Fisher-Yates-style random sample of N songs from the catalog.
- * Used as the empty-state "featured songs" list on the Songs page.
- */
+// Return a random sample of n songs without repeats.
 export function getRandomSongs(n = 20) {
   const source = songs.value;
   if (source.length <= n) return [...source];

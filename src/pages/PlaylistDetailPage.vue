@@ -1,5 +1,5 @@
 <template>
-  <div class="section-stack" v-if="playlist">
+  <div v-if="playlist" class="section-stack" style="padding-bottom:340px;">
 
     <!-- Header -->
     <div class="page-hero">
@@ -14,12 +14,7 @@
       </div>
 
       <div class="is-flex" style="gap:0.5rem;flex-shrink:0;flex-wrap:wrap;">
-        <button
-          v-if="playableSongs.length > 0"
-          class="button is-success"
-          @click="playAll"
-          title="Play all songs"
-        >
+        <button v-if="playableSongs.length > 0" class="button is-success" @click="playAll">
           <SvgIcon name="play" :size="14" class="mr-2" />Play all
         </button>
         <router-link class="button is-light" to="/playlists">
@@ -31,7 +26,7 @@
       </div>
     </div>
 
-    <!-- Add songs search (above the song list) -->
+    <!-- Songs search -->
     <div class="box">
       <SectionTitle icon="plus">Add songs</SectionTitle>
       <SongSearchPicker
@@ -39,7 +34,7 @@
         :exclude-ids="playlist.songIds"
         placeholder="Search by title, artist, or genre to add a song…"
         class="mt-3"
-        @pick="handleAddSong"
+        @pick="song => addSongToPlaylist(playlist.id, song.id)"
       />
       <p class="is-size-7 mt-2" style="color:var(--muted);">
         {{ allSongs.length.toLocaleString() }} songs in the catalog. Already-added songs are hidden.
@@ -56,8 +51,8 @@
         :show-remove="true"
         remove-title="Remove from playlist"
         :play-context="{ songs: playlistSongs, index: idx, label: `Playlist: ${playlist.name}` }"
-        @remove="handleRemoveSong(song.id)"
-        @toggle-like="handleToggleLike(song.id)"
+        @remove="removeSongFromPlaylist(playlist.id, song.id)"
+        @toggle-like="toggleFavoriteSong(song.id)"
       />
       <p v-if="playlistSongs.length === 0" class="has-text-centered py-5" style="color:var(--muted);">
         No songs yet. Search above to add some.
@@ -77,21 +72,18 @@
 import { computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import SectionTitle     from '../components/SectionTitle.vue';
-import SvgIcon          from '../components/SvgIcon.vue';
-import SongRow          from '../components/SongRow.vue';
+import SectionTitle from '../components/SectionTitle.vue';
+import SvgIcon from '../components/SvgIcon.vue';
+import SongRow from '../components/SongRow.vue';
 import SongSearchPicker from '../components/SongSearchPicker.vue';
 
-import {
-  loadPlaylists, deletePlaylist,
-  addSongToPlaylist, removeSongFromPlaylist, getPlaylist,
-} from '../store/playlists.js';
+import { loadPlaylists, deletePlaylist, addSongToPlaylist, removeSongFromPlaylist, getPlaylist } from '../store/playlists.js';
 import { songs as allSongs, songsById, loadSongs } from '../store/songs.js';
 import { favoriteSongIds, toggleFavoriteSong } from '../store/profile.js';
 import { totalDuration } from '../utils/duration.js';
 import { playQueue } from '../store/player.js';
 
-const route  = useRoute();
+const route = useRoute();
 const router = useRouter();
 
 const playlist = computed(() => getPlaylist(route.params.id));
@@ -102,7 +94,7 @@ const playlistSongs = computed(() => {
 });
 
 const playableSongs = computed(() => playlistSongs.value.filter(s => s.preview_url));
-const duration      = computed(() => totalDuration(playlistSongs.value));
+const duration = computed(() => totalDuration(playlistSongs.value));
 
 const formattedDate = computed(() => {
   if (!playlist.value?.createdAt) return '';
@@ -111,12 +103,7 @@ const formattedDate = computed(() => {
   });
 });
 
-async function handleAddSong(song)      { await addSongToPlaylist(playlist.value.id, song.id); }
-async function handleRemoveSong(songId) { await removeSongFromPlaylist(playlist.value.id, songId); }
-function handleToggleLike(songId)       { toggleFavoriteSong(songId); }
-
 function playAll() {
-  if (playableSongs.value.length === 0) return;
   playQueue(playlistSongs.value, 0, `Playlist: ${playlist.value.name}`);
 }
 

@@ -30,22 +30,16 @@
 
     <!-- Results list -->
     <div class="box" style="padding: 0.5rem;">
-      <div v-if="loading" class="has-text-centered py-5" style="color:var(--muted);">
-        Loading catalog…
-      </div>
-      <div v-else-if="error" class="has-text-centered py-5 has-text-danger">
-        {{ error }}
-      </div>
-      <div v-else-if="visibleSongs.length === 0" class="has-text-centered py-5" style="color:var(--muted);">
-        No songs matched your search.
-      </div>
+      <div v-if="loading" class="has-text-centered py-5" style="color:var(--muted);">Loading catalog…</div>
+      <div v-else-if="error" class="has-text-centered py-5 has-text-danger">{{ error }}</div>
+      <div v-else-if="visibleSongs.length === 0" class="has-text-centered py-5" style="color:var(--muted);">No songs matched your search.</div>
       <SongRow
         v-for="song in visibleSongs"
         :key="song.id"
         :song="song"
         :is-liked="favoriteSongIds.has(song.id)"
         :show-remove="false"
-        @toggle-like="toggleLike"
+        @toggle-like="song => toggleFavoriteSong(song.id)"
       />
     </div>
 
@@ -72,22 +66,22 @@
 import { computed, onMounted, ref } from 'vue';
 import Fuse from 'fuse.js';
 
-import PageHero     from '../components/PageHero.vue';
+import PageHero from '../components/PageHero.vue';
 import SectionTitle from '../components/SectionTitle.vue';
-import SvgIcon      from '../components/SvgIcon.vue';
-import SongRow      from '../components/SongRow.vue';
-import D3BarChart   from '../components/D3BarChart.vue';
+import SvgIcon from '../components/SvgIcon.vue';
+import SongRow from '../components/SongRow.vue';
+import D3BarChart from '../components/D3BarChart.vue';
 
 import { songs as songsCatalog, songsLoading, songsError, loadSongs, getRandomSongs } from '../store/songs.js';
 import { favoriteSongIds, toggleFavoriteSong, loadProfile } from '../store/profile.js';
 
 const searchQuery = ref('');
-const randomSeed  = ref([]);
+const randomSeed = ref([]);
 
 const loading = computed(() => songsLoading.value && songsCatalog.value.length === 0);
-const error   = computed(() => songsError.value);
+const error = computed(() => songsError.value);
 
-// ── Fuse search ──────────────────────────────────────────────────────────────
+// Fuse.js search index for songs
 const fuse = computed(() => new Fuse(songsCatalog.value, {
   keys: ['title', 'artist', 'genre'],
   threshold: 0.35,
@@ -97,40 +91,19 @@ const fuse = computed(() => new Fuse(songsCatalog.value, {
 
 const visibleSongs = computed(() => {
   const q = searchQuery.value.trim();
-  if (!q) return randomSeed.value;
-  return fuse.value.search(q).slice(0, 20).map(r => r.item);
+  return q ? fuse.value.search(q).slice(0, 20).map(r => r.item) : randomSeed.value;
 });
 
-// ── Chart data ───────────────────────────────────────────────────────────────
-const genreChartData = computed(() => {
+// Count songs per genre/artist for the D3 charts.
+function countBy(key) {
   const counts = new Map();
-  for (const s of songsCatalog.value) {
-    counts.set(s.genre, (counts.get(s.genre) || 0) + 1);
-  }
-  return [...counts.entries()]
-    .filter(([g]) => g)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([label, value]) => ({ label, value }));
-});
-
-const topArtistsData = computed(() => {
-  const counts = new Map();
-  for (const s of songsCatalog.value) {
-    counts.set(s.artist, (counts.get(s.artist) || 0) + 1);
-  }
-  return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([label, value]) => ({ label, value }));
-});
-
-// ── Actions ──────────────────────────────────────────────────────────────────
-function toggleLike(song) {
-  toggleFavoriteSong(song.id);
+  for (const s of songsCatalog.value) counts.set(s[key], (counts.get(s[key]) || 0) + 1);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([label, value]) => ({ label, value }));
 }
 
-// ── Lifecycle ────────────────────────────────────────────────────────────────
+const genreChartData = computed(() => countBy('genre').filter(d => d.label));
+const topArtistsData = computed(() => countBy('artist'));
+
 onMounted(async () => {
   await loadSongs();
   loadProfile();

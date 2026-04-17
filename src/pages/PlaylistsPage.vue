@@ -1,7 +1,7 @@
 <template>
   <div class="section-stack">
 
-    <PageHero kicker="Library" title="Your playlists" subtitle="Create and manage your personal playlists."  />
+    <PageHero kicker="Library" title="Your playlists" subtitle="Create and manage your personal playlists." />
 
     <!-- Create new playlist -->
     <div class="box">
@@ -17,9 +17,7 @@
           />
         </div>
         <div class="control">
-          <button class="button is-success" :disabled="!newName.trim()" @click="handleCreate">
-            Create
-          </button>
+          <button class="button is-success" :disabled="!newName.trim()" @click="handleCreate">Create</button>
         </div>
       </div>
       <p v-if="createError" class="has-text-danger is-size-7 mt-2">{{ createError }}</p>
@@ -54,16 +52,16 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import PageHero     from '../components/PageHero.vue';
+import PageHero from '../components/PageHero.vue';
 import SectionTitle from '../components/SectionTitle.vue';
-import SvgIcon      from '../components/SvgIcon.vue';
+import SvgIcon from '../components/SvgIcon.vue';
 import PlaylistCard from '../components/PlaylistCard.vue';
 
 import { playlists, playlistsLoading, playlistsError, loadPlaylists, createPlaylist } from '../store/playlists.js';
 import { songs, loadSongs } from '../store/songs.js';
 
-const router     = useRouter();
-const newName    = ref('');
+const router = useRouter();
+const newName = ref('');
 const createError = ref('');
 
 async function handleCreate() {
@@ -76,7 +74,7 @@ async function handleCreate() {
   createError.value = '';
   const pl = await createPlaylist(name);
   newName.value = '';
-  // Navigate straight to the new playlist's detail page
+  // Navigate to the new playlist's detail page
   router.push(`/playlists/${pl.id}`);
 }
 

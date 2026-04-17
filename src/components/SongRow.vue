@@ -12,7 +12,7 @@
       >
         <SvgIcon :name="isActivelyPlaying ? 'pause' : 'play'" :size="18" />
       </button>
-      <!-- Equalizer bars shown when currently playing -->
+      <!-- Equalizer animation, shown when the song is actively playing -->
       <div v-if="isActivelyPlaying" class="song-row-eq" aria-hidden="true">
         <span></span><span></span><span></span>
       </div>
@@ -24,7 +24,7 @@
       <p class="song-row-artist">{{ song.artist }}</p>
     </div>
 
-    <!-- Genre tag (optional) -->
+    <!-- Genre tag -->
     <div v-if="showGenre && song.genre" class="song-row-genre">
       <span class="tag is-light">{{ song.genre }}</span>
     </div>
@@ -64,32 +64,28 @@ import SvgIcon from './SvgIcon.vue';
 import { playSong, playQueue, isCurrentSong, isPlayingSong } from '../store/player.js';
 
 const props = defineProps({
-  song:           { type: Object, required: true },
-  isLiked:        { type: Boolean, default: false },
-  showLike:       { type: Boolean, default: true },
-  showRemove:     { type: Boolean, default: false },
-  removeTitle:    { type: String,  default: 'Remove' },
-  showGenre:      { type: Boolean, default: true },
-  showDuration:   { type: Boolean, default: true },
-  // If provided, clicking the play button plays a queue (playlist context)
-  // instead of a single track.
-  playContext:    { type: Object, default: null }, // { songs: Song[], index: number, label: string }
+  song: { required: true },
+  isLiked: { default: false },
+  showLike: { default: true },
+  showRemove: { default: false },
+  removeTitle: { default: 'Remove' },
+  showGenre: { default: true },
+  showDuration: { default: true },
+  // When set, play triggers a queue instead of a single track.
+  playContext: { default: null },
 });
 
 defineEmits(['toggle-like', 'remove']);
 
-const isCurrent         = computed(() => isCurrentSong(props.song));
+const isCurrent = computed(() => isCurrentSong(props.song));
 const isActivelyPlaying = computed(() => isPlayingSong(props.song));
 
 function handlePlay() {
   if (!props.song.preview_url) return;
-  if (props.playContext) {
-    playQueue(props.playContext.songs, props.playContext.index, props.playContext.label);
-  } else {
-    playSong(props.song);
-  }
+  props.playContext
+    ? playQueue(props.playContext.songs, props.playContext.index, props.playContext.label)
+    : playSong(props.song);
 }
-
 </script>
 
 <style scoped>
@@ -173,16 +169,16 @@ function handlePlay() {
   animation: eq-bounce 900ms ease-in-out infinite;
 }
 
-.song-row-eq span:nth-child(1) { animation-delay:   0ms; }
+.song-row-eq span:nth-child(1) { animation-delay: 0ms; }
 .song-row-eq span:nth-child(2) { animation-delay: 150ms; }
 .song-row-eq span:nth-child(3) { animation-delay: 300ms; }
 
-/* Hide equalizer when play button is being hovered (avoids overlap) */
+/* Hide equalizer when play button is being hovered */
 .song-row:hover .song-row-eq { opacity: 0.4; }
 
 @keyframes eq-bounce {
   0%, 100% { height: 20%; }
-  50%      { height: 100%; }
+  50% { height: 100%; }
 }
 
 .song-row-info {
@@ -267,13 +263,11 @@ function handlePlay() {
   color: #ef4444;
 }
 
-/* ── Mobile: hide secondary columns so row fits in viewport ─────────── */
+/* Mobile: Hide secondary columns so row fits in viewport */
 @media (max-width: 600px) {
   .song-row { gap: 0.5rem; }
-
   .song-row-genre,
   .song-row-duration { display: none; }
-
-  .song-row-actions { opacity: 1; } /* always show on touch */
+  .song-row-actions { opacity: 1; }
 }
 </style>

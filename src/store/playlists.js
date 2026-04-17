@@ -3,12 +3,10 @@ import { loadJSON, saveJSON, fetchPlaylists, apiCreatePlaylist, apiUpdatePlaylis
 
 const STORAGE_KEY = 'spotifyClone.playlists';
 
-// ── State ─────────────────────────────────────────────────────────────────────
 export const playlists = ref(loadJSON(STORAGE_KEY, []));
 export const playlistsLoading = ref(false);
-export const playlistsError  = ref('');
+export const playlistsError = ref('');
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 function persist() {
   saveJSON(STORAGE_KEY, playlists.value);
 }
@@ -17,12 +15,18 @@ function generateId() {
   return `pl_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 }
 
-// ── Actions ───────────────────────────────────────────────────────────────────
+// Sync with the server in the background; errors are non-fatal.
+async function syncToServer(fn) {
+  try {
+    await fn();
+  } catch (err) {
+    console.error('Playlist sync failed:', err);
+  }
+}
 
-/** Load all playlists from the server (call once on app start or first use). */
 export async function loadPlaylists() {
   playlistsLoading.value = true;
-  playlistsError.value   = '';
+  playlistsError.value = '';
   try {
     playlists.value = await fetchPlaylists();
     persist();
@@ -34,75 +38,41 @@ export async function loadPlaylists() {
   }
 }
 
-/** Create a new playlist with a given name. Returns the new playlist object. */
 export async function createPlaylist(name) {
   const playlist = {
-    id:        generateId(),
-    name:      name.trim(),
+    id: generateId(),
+    name: name.trim(),
     createdAt: new Date().toISOString(),
-    songIds:   [],
+    songIds: [],
   };
   playlists.value.push(playlist);
   persist();
-  try {
-    await apiCreatePlaylist(playlist);
-  } catch (err) {
-    console.error('Failed to sync new playlist:', err);
-  }
+  await syncToServer(() => apiCreatePlaylist(playlist));
   return playlist;
 }
 
-/** Rename an existing playlist. */
-export async function renamePlaylist(id, newName) {
-  const pl = playlists.value.find(p => p.id === id);
-  if (!pl) return;
-  pl.name = newName.trim();
-  persist();
-  try {
-    await apiUpdatePlaylist(id, pl);
-  } catch (err) {
-    console.error('Failed to sync rename:', err);
-  }
-}
-
-/** Delete a playlist by id. */
 export async function deletePlaylist(id) {
   playlists.value = playlists.value.filter(p => p.id !== id);
   persist();
-  try {
-    await apiDeletePlaylist(id);
-  } catch (err) {
-    console.error('Failed to sync delete:', err);
-  }
+  await syncToServer(() => apiDeletePlaylist(id));
 }
 
-/** Add a song ID to a playlist (no-op if already present). */
 export async function addSongToPlaylist(playlistId, songId) {
   const pl = playlists.value.find(p => p.id === playlistId);
   if (!pl || pl.songIds.includes(String(songId))) return;
   pl.songIds.push(String(songId));
   persist();
-  try {
-    await apiUpdatePlaylist(playlistId, pl);
-  } catch (err) {
-    console.error('Failed to sync add song:', err);
-  }
+  await syncToServer(() => apiUpdatePlaylist(playlistId, pl));
 }
 
-/** Remove a song ID from a playlist. */
 export async function removeSongFromPlaylist(playlistId, songId) {
   const pl = playlists.value.find(p => p.id === playlistId);
   if (!pl) return;
   pl.songIds = pl.songIds.filter(id => id !== String(songId));
   persist();
-  try {
-    await apiUpdatePlaylist(playlistId, pl);
-  } catch (err) {
-    console.error('Failed to sync remove song:', err);
-  }
+  await syncToServer(() => apiUpdatePlaylist(playlistId, pl));
 }
 
-/** Get a single playlist by id. */
 export function getPlaylist(id) {
   return playlists.value.find(p => p.id === id) ?? null;
 }

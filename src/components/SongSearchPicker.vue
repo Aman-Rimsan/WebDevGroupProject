@@ -42,17 +42,15 @@ import Fuse from 'fuse.js';
 import SvgIcon from './SvgIcon.vue';
 
 const props = defineProps({
-  // Source catalog to search through
-  songs:       { type: Array,  required: true },
-  // Set of song IDs to exclude (already favorited / in playlist etc.)
-  excludeIds:  { type: Array,  default: () => [] },
-  placeholder: { type: String, default: 'Search for a song…' },
-  limit:       { type: Number, default: 8 },
+  songs: { required: true },
+  excludeIds: { default: () => [] },
+  placeholder: { default: 'Search for a song…' },
+  limit: { default: 8 },
 });
 
 const emit = defineEmits(['pick']);
 
-const query     = ref('');
+const query = ref('');
 const isFocused = ref(false);
 
 const fuse = computed(() => new Fuse(props.songs, {
@@ -66,10 +64,7 @@ const results = computed(() => {
   const q = query.value.trim();
   if (!q) return [];
   const excluded = new Set(props.excludeIds);
-  return fuse.value.search(q)
-    .map(r => r.item)
-    .filter(s => !excluded.has(s.id))
-    .slice(0, props.limit);
+  return fuse.value.search(q).map(r => r.item).filter(s => !excluded.has(s.id)).slice(0, props.limit);
 });
 
 function handlePick(song) {
@@ -77,7 +72,7 @@ function handlePick(song) {
   query.value = '';
 }
 
-// Delay blur so the mousedown handler on results fires first
+// Delay blur so the mousedown handler on results fires first.
 function handleBlur() {
   setTimeout(() => { isFocused.value = false; }, 150);
 }

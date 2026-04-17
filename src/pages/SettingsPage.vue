@@ -1,7 +1,7 @@
 <template>
   <div class="section-stack">
 
-    <PageHero kicker="Preferences" title="Settings" subtitle="Adjust your profile name, bio, theme, font size, and accent color."  />
+    <PageHero kicker="Preferences" title="Settings" subtitle="Adjust your profile name, bio, theme, font size, and accent color." />
 
     <div class="columns is-variable is-4">
 
@@ -70,13 +70,13 @@
             <p class="is-size-7 mt-1 mb-3" style="color:var(--muted);">Used for buttons, highlights, and charts.</p>
             <div class="swatch-row">
               <button
-                v-for="choice in accentChoices"
+                v-for="choice in ACCENT_CHOICES"
                 :key="choice.value"
                 class="swatch"
                 :class="{ 'is-active': state.accentColor === choice.value }"
                 :title="choice.name"
                 :style="{ background: choice.value }"
-                @click="setAccentColor(choice.value)"
+                @click="state.accentColor = choice.value"
               ></button>
             </div>
           </div>
@@ -84,7 +84,7 @@
 
         <!-- Actions -->
         <div class="is-flex is-justify-content-flex-end mt-3" style="gap:0.75rem;">
-          <button class="button is-light"   @click="resetDefaults">Reset defaults</button>
+          <button class="button is-light" @click="resetDefaults">Reset defaults</button>
           <button class="button is-success" @click="syncSettings">Save settings</button>
         </div>
       </div>
@@ -96,66 +96,50 @@
 <script setup>
 import { computed, onMounted, reactive, watch } from 'vue';
 
-import PageHero     from '../components/PageHero.vue';
+import PageHero from '../components/PageHero.vue';
 import SectionTitle from '../components/SectionTitle.vue';
 
 import { loadJSON, saveJSON } from '../api';
 
-// ── Constants ─────────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'spotifyClone.settings';
+
 const DEFAULT_SETTINGS = {
-  displayName:        'Guest',
+  displayName: 'Guest',
   profileDescription: "We don't know much about Guest, but we're sure they have great music taste!",
-  isDarkMode:   false,
-  fontSize:     16,
-  accentColor:  '#1db954',
+  isDarkMode: false,
+  fontSize: 16,
+  accentColor: '#1db954',
 };
+
 const ACCENT_CHOICES = [
   { name: 'Spotify Green', value: '#1db954' },
-  { name: 'Indigo',        value: '#5c6bc0' },
-  { name: 'Violet',        value: '#7c3aed' },
-  { name: 'Rose',          value: '#e11d48' },
-  { name: 'Amber',         value: '#d97706' },
-  { name: 'Sky',           value: '#0284c7' },
-  { name: 'Emerald',       value: '#059669' },
-  { name: 'Slate',         value: '#475569' },
+  { name: 'Indigo', value: '#5c6bc0' },
+  { name: 'Violet', value: '#7c3aed' },
+  { name: 'Rose', value: '#e11d48' },
+  { name: 'Amber', value: '#d97706' },
+  { name: 'Sky', value: '#0284c7' },
+  { name: 'Emerald', value: '#059669' },
+  { name: 'Slate', value: '#475569' },
 ];
 
-// ── State ─────────────────────────────────────────────────────────────────────
-const state         = reactive(loadJSON(STORAGE_KEY, DEFAULT_SETTINGS));
-const accentChoices = ACCENT_CHOICES;
-
+const state = reactive(loadJSON(STORAGE_KEY, DEFAULT_SETTINGS));
 const themeIcon = computed(() => state.isDarkMode ? '🌙' : '☀️');
 
-// ── Theme application ─────────────────────────────────────────────────────────
 function applyTheme() {
   document.body.classList.toggle('theme-dark', Boolean(state.isDarkMode));
   document.documentElement.style.setProperty('--base-font-size', `${state.fontSize}px`);
-  document.documentElement.style.setProperty('--accent',      state.accentColor);
+  document.documentElement.style.setProperty('--accent', state.accentColor);
   document.documentElement.style.setProperty('--accent-soft', `${state.accentColor}22`);
 }
 
-// ── Persistence ───────────────────────────────────────────────────────────────
 function syncSettings() {
-  const payload = {
-    isDarkMode:         state.isDarkMode,
-    fontSize:           state.fontSize,
-    accentColor:        state.accentColor,
-    displayName:        state.displayName,
-    profileDescription: state.profileDescription,
-  };
-  saveJSON(STORAGE_KEY, payload);
+  saveJSON(STORAGE_KEY, { ...state });
   applyTheme();
-
 }
 
-watch(state, () => syncSettings(), { deep: true, immediate: true });
-
-// ── Actions ───────────────────────────────────────────────────────────────────
-function setAccentColor(value) { state.accentColor = value; }
+watch(state, syncSettings, { deep: true, immediate: true });
 
 function resetDefaults() { Object.assign(state, JSON.parse(JSON.stringify(DEFAULT_SETTINGS))); }
-
 function increaseFont() { if (state.fontSize < 24) state.fontSize += 1; }
 function decreaseFont() { if (state.fontSize > 12) state.fontSize -= 1; }
 

@@ -22,17 +22,15 @@ import SvgIcon from './SvgIcon.vue';
 import { totalDuration } from '../utils/duration.js';
 
 const props = defineProps({
-  playlist: { type: Object, required: true },
-  // Full song catalog so we can compute duration
-  songs:    { type: Array,  default: () => [] },
+  playlist: { required: true },
+  songs: { default: () => [] },
 });
 
-useRouter(); // needed for template $router access
+// useRouter is called here so $router is available in the template.
+useRouter();
 
 const playlistSongs = computed(() =>
-  props.playlist.songIds
-    .map(id => props.songs.find(s => String(s.id) === String(id)))
-    .filter(Boolean)
+  props.playlist.songIds.map(id => props.songs.find(s => String(s.id) === String(id))).filter(Boolean)
 );
 
 const duration = computed(() => totalDuration(playlistSongs.value));
@@ -50,10 +48,12 @@ const formattedDate = computed(() => {
   cursor: pointer;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
+
 .playlist-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
 }
+
 .playlist-card-icon {
   width: 48px;
   height: 48px;
@@ -64,6 +64,7 @@ const formattedDate = computed(() => {
   place-items: center;
   flex-shrink: 0;
 }
+
 .playlist-card-name {
   font-size: 1.05rem;
   font-weight: 700;

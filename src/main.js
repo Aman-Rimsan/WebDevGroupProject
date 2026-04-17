@@ -4,9 +4,7 @@ import router from './router';
 import './styles/app.css';
 import { loadJSON } from './api';
 
-const STORAGE_KEYS = {
-  settings: 'spotifyClone.settings',
-};
+const SETTINGS_KEY = 'spotifyClone.settings';
 
 const DEFAULT_SETTINGS = {
   displayName: 'Guest',
@@ -16,6 +14,7 @@ const DEFAULT_SETTINGS = {
   accentColor: '#1db954',
 };
 
+// Apply saved theme before the app mounts to avoid a flash of unstyled content.
 function applyTheme(settings) {
   const { isDarkMode, fontSize, accentColor } = settings;
   document.body.classList.toggle('theme-dark', Boolean(isDarkMode));
@@ -24,6 +23,6 @@ function applyTheme(settings) {
   document.documentElement.style.setProperty('--accent-soft', `${accentColor}22`);
 }
 
-applyTheme(loadJSON(STORAGE_KEYS.settings, DEFAULT_SETTINGS));
+applyTheme(loadJSON(SETTINGS_KEY, DEFAULT_SETTINGS));
 
 createApp(App).use(router).mount('#app');

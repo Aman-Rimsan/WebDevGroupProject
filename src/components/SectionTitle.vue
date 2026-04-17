@@ -9,7 +9,7 @@
 import SvgIcon from './SvgIcon.vue';
 
 defineProps({
-  icon: { type: String, default: '' },
+  icon: { default: '' },
 });
 </script>
 

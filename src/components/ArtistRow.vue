@@ -25,17 +25,15 @@ import SvgIcon from './SvgIcon.vue';
 import { artistFirstSong, songs as catalog } from '../store/songs.js';
 
 const props = defineProps({
-  artist:     { type: String,  required: true },
-  showRemove: { type: Boolean, default: true },
+  artist: { required: true },
+  showRemove: { default: true },
 });
 
 defineEmits(['remove']);
 
 const imageUrl = computed(() => artistFirstSong.value.get(props.artist)?.artwork_link || '');
-const initial  = computed(() => (props.artist || '?').charAt(0).toUpperCase());
-const songCount = computed(() =>
-  catalog.value.filter(s => s.artist === props.artist).length
-);
+const initial = computed(() => (props.artist || '?').charAt(0).toUpperCase());
+const songCount = computed(() => catalog.value.filter(s => s.artist === props.artist).length);
 </script>
 
 <style scoped>

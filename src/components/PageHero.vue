@@ -11,8 +11,8 @@
 
 <script setup>
 defineProps({
-  kicker:   { type: String, required: true },
-  title:    { type: String, required: true },
-  subtitle: { type: String, default: '' },
+  kicker: { required: true },
+  title: { required: true },
+  subtitle: { default: '' },
 });
 </script>

@@ -13,11 +13,7 @@
       <!-- Center: controls + progress -->
       <div class="mini-player-center">
         <div class="mini-player-controls">
-          <button
-            class="mini-player-action"
-            :title="isPlaying ? 'Pause' : 'Play'"
-            @click="togglePlayPause"
-          >
+          <button class="mini-player-action" :title="isPlaying ? 'Pause' : 'Play'" @click="togglePlayPause">
             <SvgIcon :name="isPlaying ? 'pause' : 'play'" :size="22" />
           </button>
           <button class="mini-player-action-small" title="Stop" @click="stopPlayback">
@@ -27,11 +23,7 @@
 
         <div class="mini-player-progress">
           <span class="mini-player-time">{{ formatTime(currentTime) }}</span>
-          <div
-            ref="trackEl"
-            class="mini-player-track"
-            @click="handleSeek"
-          >
+          <div ref="trackEl" class="mini-player-track" @click="handleSeek">
             <div class="mini-player-track-fill" :style="{ width: progressPercent + '%' }"></div>
           </div>
           <span class="mini-player-time">{{ formatTime(totalTime) }}</span>
@@ -66,16 +58,13 @@ const trackEl = ref(null);
 
 function formatTime(seconds) {
   const s = Math.max(0, Math.floor(seconds || 0));
-  const m = Math.floor(s / 60);
-  const ss = s % 60;
-  return `${m}:${ss.toString().padStart(2, '0')}`;
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
 function handleSeek(event) {
   if (!trackEl.value) return;
   const rect = trackEl.value.getBoundingClientRect();
-  const ratio = (event.clientX - rect.left) / rect.width;
-  seek(ratio * (totalTime.value || 30));
+  seek((event.clientX - rect.left) / rect.width * (totalTime.value || 30));
 }
 </script>
 
@@ -243,6 +232,7 @@ function handleSeek(event) {
 .player-slide-leave-active {
   transition: transform 250ms ease, opacity 250ms ease;
 }
+
 .player-slide-enter-from,
 .player-slide-leave-to {
   transform: translateY(100%);

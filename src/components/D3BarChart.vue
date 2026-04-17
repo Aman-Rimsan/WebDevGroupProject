@@ -7,12 +7,9 @@ import { onMounted, ref, watch } from 'vue';
 import * as d3 from 'd3';
 
 const props = defineProps({
-  // Array of { label: string, value: number }
-  data: { type: Array, required: true },
-  // How many bars to show (slices from the front, already sorted by caller)
-  maxBars: { type: Number, default: 10 },
-  // Rotate x-axis labels (degrees)
-  labelRotation: { type: Number, default: -30 },
+  data: { required: true },
+  maxBars: { default: 10 },
+  labelRotation: { default: -30 },
 });
 
 const el = ref(null);
@@ -30,12 +27,12 @@ function draw(data) {
 
   const containerWidth = el.value.clientWidth || 400;
   const margin = { top: 16, right: 16, bottom: props.labelRotation !== 0 ? 80 : 40, left: 44 };
-  const width  = containerWidth - margin.left - margin.right;
+  const width = containerWidth - margin.left - margin.right;
   const height = 240 - margin.top - margin.bottom;
 
-  const accent   = cssVar('--accent')   || '#1db954';
-  const mutedCol = cssVar('--muted')    || '#6b7280';
-  const textCol  = cssVar('--text')     || '#111827';
+  const accent = cssVar('--accent') || '#1db954';
+  const mutedCol = cssVar('--muted') || '#6b7280';
+  const textCol = cssVar('--text') || '#111827';
 
   const svg = d3.select(el.value)
     .append('svg')
@@ -53,20 +50,20 @@ function draw(data) {
     .call(g => g.select('.domain').remove())
     .call(g => g.selectAll('line').attr('stroke', mutedCol).attr('stroke-opacity', 0.2));
 
-  // Bars with entrance animation
+  // Bars (with entrance animation)
   svg.selectAll('.bar')
     .data(sliced)
     .join('rect')
     .attr('class', 'bar')
-    .attr('x',      d => x(d.label))
-    .attr('width',  x.bandwidth())
-    .attr('y',      height)
+    .attr('x', d => x(d.label))
+    .attr('width', x.bandwidth())
+    .attr('y', height)
     .attr('height', 0)
     .attr('rx', 5)
     .attr('fill', accent)
     .attr('fill-opacity', 0.82)
     .transition().duration(550).ease(d3.easeCubicOut)
-    .attr('y',      d => y(d.value))
+    .attr('y', d => y(d.value))
     .attr('height', d => height - y(d.value));
 
   // Value labels
@@ -104,6 +101,6 @@ function draw(data) {
     .attr('font-size', '11px');
 }
 
-watch(() => props.data, (val) => { if (val?.length) draw(val); }, { deep: true });
+watch(() => props.data, val => { if (val?.length) draw(val); }, { deep: true });
 onMounted(() => { if (props.data?.length) draw(props.data); });
 </script>
