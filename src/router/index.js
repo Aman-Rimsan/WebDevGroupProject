@@ -11,7 +11,7 @@ const router = createRouter({
     return { top: 0 };
   },
   routes: [
-    { path: '/',                redirect: '/profile' },
+    { path: '/',                redirect: '/songs' },
     { path: '/profile',         component: ProfilePage },
     { path: '/songs',           component: SongsPage },
     { path: '/playlists',       component: PlaylistsPage },

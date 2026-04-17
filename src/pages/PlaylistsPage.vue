@@ -1,12 +1,7 @@
 <template>
   <div class="section-stack">
 
-    <PageHero kicker="Library" title="Your Playlists" subtitle="Create and manage your personal playlists. Click any playlist to view and edit its songs.">
-      <div class="tags has-addons" style="margin:0">
-        <span class="tag is-light" style="background:var(--surface);border:1px solid var(--border);color:var(--muted);">Playlists</span>
-        <span class="tag" style="background:var(--accent);color:#fff;">{{ playlists.length }}</span>
-      </div>
-    </PageHero>
+    <PageHero kicker="Library" title="Your playlists" subtitle="Create and manage your personal playlists."  />
 
     <!-- Create new playlist -->
     <div class="box">

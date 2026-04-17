@@ -18,14 +18,14 @@
 
       <div id="mainNav" class="navbar-menu">
         <div class="navbar-end" style="gap:0.5rem;padding-right:1rem;">
+          <router-link class="navbar-item nav-chip" to="/songs">
+            <SvgIcon name="music" :size="14" class="mr-1" />Songs
+          </router-link>
           <router-link class="navbar-item nav-chip" to="/profile">
             <SvgIcon name="person" :size="14" class="mr-1" />Profile
           </router-link>
           <router-link class="navbar-item nav-chip" to="/playlists">
             <SvgIcon name="queue" :size="14" class="mr-1" />Playlists
-          </router-link>
-          <router-link class="navbar-item nav-chip" to="/songs">
-            <SvgIcon name="music" :size="14" class="mr-1" />Songs
           </router-link>
           <router-link class="navbar-item nav-chip" to="/settings">
             <SvgIcon name="settings" :size="14" class="mr-1" />Settings

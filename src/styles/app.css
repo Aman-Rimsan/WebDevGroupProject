@@ -51,6 +51,16 @@ textarea.textarea {
   border-radius: 14px !important;
 }
 
+/* Square the right edge when an input is followed by a button (has-addons) */
+.field.has-addons .input {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+.field.has-addons .button {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
 input.input::placeholder,
 textarea.textarea::placeholder {
   color: var(--muted);
@@ -98,15 +108,36 @@ textarea.textarea:focus {
 .button.is-link {
   background:   var(--accent);
   border-color: transparent;
+  color:        #fff;
 }
-.button.is-success:hover,
-.button.is-primary:hover,
-.button.is-link:hover { filter: brightness(0.94); }
+.button.is-success:hover:not(:disabled):not([disabled]),
+.button.is-primary:hover:not(:disabled):not([disabled]),
+.button.is-link:hover:not(:disabled):not([disabled]) { filter: brightness(0.94); }
+
+/* Disabled accent buttons — grey out regardless of accent color */
+.button.is-success:disabled,
+.button.is-primary:disabled,
+.button.is-link:disabled,
+.button.is-success[disabled],
+.button.is-primary[disabled],
+.button.is-link[disabled] {
+  background:   var(--surface-3) !important;
+  border-color: var(--border)    !important;
+  color:        var(--muted)     !important;
+  opacity:      1                !important;
+  cursor:       not-allowed;
+}
 
 .button.is-light {
   background:   var(--surface-2);
   color:        var(--text);
   border-color: var(--border);
+}
+.button.is-light:hover,
+.button.is-light:focus {
+  background:   var(--surface-3) !important;
+  color:        var(--text) !important;
+  border-color: var(--border) !important;
 }
 .button.is-danger.is-light {
   background:   rgba(239, 68, 68, 0.10);
@@ -226,7 +257,7 @@ textarea.textarea:focus {
 /* ── Section stack (vertical gap) ──────────────────────────────────── */
 /* Replaces .section-stack — use Bulma .mb-4 / gap utilities inline, */
 /* but keep the class for the outer wrapper for consistent spacing.    */
-.section-stack { display: grid; gap: 1.25rem; }
+.section-stack { display: grid; gap: 1.25rem; padding-bottom: 340px; }
 
 /* ── Stat cards ────────────────────────────────────────────────────── */
 .stat-card {

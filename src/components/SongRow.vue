@@ -45,35 +45,6 @@
         <SvgIcon :name="isLiked ? 'heart-filled' : 'heart'" :size="16" />
       </button>
 
-      <!-- Add to playlist dropdown -->
-      <div v-if="showPlaylistAdd" class="dropdown is-right playlist-dropdown" :data-song-id="song.id">
-        <div class="dropdown-trigger">
-          <button class="song-row-action" title="Add to playlist" @click.stop="togglePlaylistDropdown">
-            <SvgIcon name="plus" :size="16" />
-          </button>
-        </div>
-        <div class="dropdown-menu" style="min-width:200px;">
-          <div class="dropdown-content">
-            <p v-if="playlists.length === 0" class="dropdown-item is-size-7" style="color:var(--muted);">
-              No playlists yet.
-              <router-link to="/playlists">Create one →</router-link>
-            </p>
-            <a
-              v-for="pl in playlists"
-              :key="pl.id"
-              class="dropdown-item"
-              :class="{ 'has-text-success': pl.songIds.includes(song.id) }"
-              @click.stop="handleAddToPlaylist(pl.id)"
-            >
-              <SvgIcon
-                :name="pl.songIds.includes(song.id) ? 'check' : 'playlist'"
-                :size="13" style="margin-right:6px;vertical-align:middle;" />
-              {{ pl.name }}
-            </a>
-          </div>
-        </div>
-      </div>
-
       <!-- Remove from current context (playlist / favorites) -->
       <button
         v-if="showRemove"
@@ -89,16 +60,13 @@
 
 <script setup>
 import { computed } from 'vue';
-import $ from 'jquery';
 import SvgIcon from './SvgIcon.vue';
 import { playSong, playQueue, isCurrentSong, isPlayingSong } from '../store/player.js';
-import { playlists, addSongToPlaylist } from '../store/playlists.js';
 
 const props = defineProps({
   song:           { type: Object, required: true },
   isLiked:        { type: Boolean, default: false },
   showLike:       { type: Boolean, default: true },
-  showPlaylistAdd:{ type: Boolean, default: true },
   showRemove:     { type: Boolean, default: false },
   removeTitle:    { type: String,  default: 'Remove' },
   showGenre:      { type: Boolean, default: true },
@@ -122,16 +90,6 @@ function handlePlay() {
   }
 }
 
-function togglePlaylistDropdown() {
-  const $all = $('.playlist-dropdown');
-  $all.not(`[data-song-id="${props.song.id}"]`).removeClass('is-active');
-  $(`[data-song-id="${props.song.id}"]`).toggleClass('is-active');
-}
-
-async function handleAddToPlaylist(playlistId) {
-  await addSongToPlaylist(playlistId, props.song.id);
-  $('.playlist-dropdown').removeClass('is-active');
-}
 </script>
 
 <style scoped>

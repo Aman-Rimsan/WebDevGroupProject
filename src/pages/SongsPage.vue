@@ -3,14 +3,9 @@
 
     <PageHero
       kicker="Songs"
-      title="Search the catalog"
-      :subtitle="`${songsCatalog.length.toLocaleString()} songs available. Search by title, artist, or genre — results ranked by relevance.`"
-    >
-      <div class="tags has-addons" style="margin:0">
-        <span class="tag is-light" style="background:var(--surface);border:1px solid var(--border);color:var(--muted);">Showing</span>
-        <span class="tag" style="background:var(--accent);color:#fff;">{{ visibleSongs.length }}</span>
-      </div>
-    </PageHero>
+      title="Discover music"
+      subtitle="10,338 songs available. Search by title, artist, or genre."
+    />
 
     <!-- Search bar -->
     <div class="box">
@@ -18,9 +13,9 @@
         <div class="control has-icons-left">
           <input
             v-model="searchQuery"
-            class="input is-medium"
+            class="input"
             type="text"
-            placeholder="Start typing to search — try an artist, a song, or a genre…"
+            placeholder="Search for a song…"
           />
           <span class="icon is-left" style="color:var(--muted);">
             <SvgIcon name="search" :size="16" />
@@ -29,9 +24,7 @@
       </div>
 
       <p class="is-size-7 mt-2" style="color:var(--muted);">
-        {{ searchQuery.trim()
-          ? `Showing top ${visibleSongs.length} matches. Refine your search for more specific results.`
-          : `Showing 20 random picks from the catalog. Start typing to search.` }}
+        {{ searchQuery.trim() ? 'Showing top 20 matches.' : 'Start typing to search.' }}
       </p>
     </div>
 
@@ -60,13 +53,13 @@
     <div class="columns is-variable is-4">
       <div class="column">
         <div class="box">
-          <SectionTitle icon="bar-chart">Top Genres in Catalog</SectionTitle>
+          <SectionTitle icon="bar-chart">Top genres in catalog</SectionTitle>
           <D3BarChart :data="genreChartData" :label-rotation="-30" class="mt-3" />
         </div>
       </div>
       <div class="column">
         <div class="box">
-          <SectionTitle icon="person">Top Artists in Catalog</SectionTitle>
+          <SectionTitle icon="person">Top artists in catalog</SectionTitle>
           <D3BarChart :data="topArtistsData" :label-rotation="-30" class="mt-3" />
         </div>
       </div>
@@ -87,7 +80,6 @@ import D3BarChart   from '../components/D3BarChart.vue';
 
 import { songs as songsCatalog, songsLoading, songsError, loadSongs, getRandomSongs } from '../store/songs.js';
 import { favoriteSongIds, toggleFavoriteSong, loadProfile } from '../store/profile.js';
-import { loadPlaylists } from '../store/playlists.js';
 
 const searchQuery = ref('');
 const randomSeed  = ref([]);
@@ -141,7 +133,6 @@ function toggleLike(song) {
 // ── Lifecycle ────────────────────────────────────────────────────────────────
 onMounted(async () => {
   await loadSongs();
-  await loadPlaylists();
   loadProfile();
   randomSeed.value = getRandomSongs(20);
 });

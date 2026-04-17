@@ -1,11 +1,7 @@
 <template>
   <div class="section-stack">
 
-    <PageHero kicker="Preferences" title="Settings" subtitle="Adjust your profile name, bio, theme, font size, and accent color.">
-      <span class="tag is-light settings-status-pill" style="background:var(--surface);border:1px solid var(--border);color:var(--muted);">
-        {{ statusMessage || 'Changes save automatically' }}
-      </span>
-    </PageHero>
+    <PageHero kicker="Preferences" title="Settings" subtitle="Adjust your profile name, bio, theme, font size, and accent color."  />
 
     <div class="columns is-variable is-4">
 
@@ -51,9 +47,7 @@
                style="border-bottom:1px solid var(--border);">
             <div>
               <p class="has-text-weight-semibold">Font size</p>
-              <p class="is-size-7" style="color:var(--muted);">
-                Preview: <span style="font-family:'DM Mono',monospace;">Enjoy your music</span>
-              </p>
+              <p class="is-size-7" style="color:var(--muted);">Change the application's font size.</p>
             </div>
             <div class="field has-addons mb-0">
               <div class="control">
@@ -100,8 +94,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue';
-import $ from 'jquery';
+import { computed, onMounted, reactive, watch } from 'vue';
 
 import PageHero     from '../components/PageHero.vue';
 import SectionTitle from '../components/SectionTitle.vue';
@@ -130,7 +123,6 @@ const ACCENT_CHOICES = [
 
 // ── State ─────────────────────────────────────────────────────────────────────
 const state         = reactive(loadJSON(STORAGE_KEY, DEFAULT_SETTINGS));
-const statusMessage = ref('');
 const accentChoices = ACCENT_CHOICES;
 
 const themeIcon = computed(() => state.isDarkMode ? '🌙' : '☀️');
@@ -155,16 +147,6 @@ function syncSettings() {
   saveJSON(STORAGE_KEY, payload);
   applyTheme();
 
-  statusMessage.value = 'Saved ✓';
-  window.clearTimeout(syncSettings._timer);
-  // jQuery: fade the status pill out after a moment
-  $('.settings-status-pill').stop(true).show();
-  syncSettings._timer = window.setTimeout(() => {
-    $('.settings-status-pill').fadeOut(500, function () {
-      statusMessage.value = '';
-      $(this).show(); // reset display for next save
-    });
-  }, 1200);
 }
 
 watch(state, () => syncSettings(), { deep: true, immediate: true });

@@ -5,29 +5,7 @@
     <div class="page-hero">
       <div style="flex:1;min-width:0;">
         <p class="page-kicker">Playlist</p>
-
-        <div v-if="renaming" class="field has-addons mt-1 mb-0" style="max-width:480px;">
-          <div class="control is-expanded">
-            <input
-              ref="renameInput"
-              v-model="renameValue"
-              class="input"
-              style="font-size:1.6rem;font-weight:700;height:auto;padding:0.2rem 0.6rem;"
-              @keyup.enter="confirmRename"
-              @keyup.escape="cancelRename"
-            />
-          </div>
-          <div class="control">
-            <button class="button is-success" @click="confirmRename">
-              <SvgIcon name="check" :size="16" />
-            </button>
-          </div>
-        </div>
-        <h1 v-else class="page-title" style="cursor:pointer;" @click="startRename" title="Click to rename">
-          {{ playlist.name }}
-          <SvgIcon name="edit" :size="18" style="opacity:0.35;vertical-align:middle;margin-left:0.4rem;" />
-        </h1>
-
+        <h1 class="page-title">{{ playlist.name }}</h1>
         <p class="page-subtitle mt-1">
           {{ playlistSongs.length }} {{ playlistSongs.length === 1 ? 'song' : 'songs' }}
           <template v-if="playlistSongs.length > 0"> · {{ duration }}</template>
@@ -53,6 +31,21 @@
       </div>
     </div>
 
+    <!-- Add songs search (above the song list) -->
+    <div class="box">
+      <SectionTitle icon="plus">Add songs</SectionTitle>
+      <SongSearchPicker
+        :songs="allSongs"
+        :exclude-ids="playlist.songIds"
+        placeholder="Search by title, artist, or genre to add a song…"
+        class="mt-3"
+        @pick="handleAddSong"
+      />
+      <p class="is-size-7 mt-2" style="color:var(--muted);">
+        {{ allSongs.length.toLocaleString() }} songs in the catalog. Already-added songs are hidden.
+      </p>
+    </div>
+
     <!-- Song list -->
     <div class="box" style="padding: 0.5rem;">
       <SongRow
@@ -67,24 +60,7 @@
         @toggle-like="handleToggleLike(song.id)"
       />
       <p v-if="playlistSongs.length === 0" class="has-text-centered py-5" style="color:var(--muted);">
-        No songs yet. Add some below.
-      </p>
-    </div>
-
-    <!-- Add songs from catalog -->
-    <div class="box">
-      <SectionTitle icon="plus">Add songs</SectionTitle>
-
-      <SongSearchPicker
-        :songs="allSongs"
-        :exclude-ids="playlist.songIds"
-        placeholder="Search by title, artist, or genre to add a song…"
-        class="mt-3"
-        @pick="handleAddSong"
-      />
-
-      <p class="is-size-7 mt-2" style="color:var(--muted);">
-        {{ allSongs.length.toLocaleString() }} songs in the catalog. Already-added songs are hidden.
+        No songs yet. Search above to add some.
       </p>
     </div>
 
@@ -98,7 +74,7 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import SectionTitle     from '../components/SectionTitle.vue';
@@ -107,7 +83,7 @@ import SongRow          from '../components/SongRow.vue';
 import SongSearchPicker from '../components/SongSearchPicker.vue';
 
 import {
-  playlists, loadPlaylists, renamePlaylist, deletePlaylist,
+  loadPlaylists, deletePlaylist,
   addSongToPlaylist, removeSongFromPlaylist, getPlaylist,
 } from '../store/playlists.js';
 import { songs as allSongs, songsById, loadSongs } from '../store/songs.js';
@@ -118,22 +94,15 @@ import { playQueue } from '../store/player.js';
 const route  = useRoute();
 const router = useRouter();
 
-const renaming    = ref(false);
-const renameValue = ref('');
-const renameInput = ref(null);
-
 const playlist = computed(() => getPlaylist(route.params.id));
 
 const playlistSongs = computed(() => {
   if (!playlist.value) return [];
-  return playlist.value.songIds
-    .map(id => songsById.value.get(id))
-    .filter(Boolean);
+  return playlist.value.songIds.map(id => songsById.value.get(id)).filter(Boolean);
 });
 
 const playableSongs = computed(() => playlistSongs.value.filter(s => s.preview_url));
-
-const duration = computed(() => totalDuration(playlistSongs.value));
+const duration      = computed(() => totalDuration(playlistSongs.value));
 
 const formattedDate = computed(() => {
   if (!playlist.value?.createdAt) return '';
@@ -142,40 +111,13 @@ const formattedDate = computed(() => {
   });
 });
 
-// ── Actions ───────────────────────────────────────────────────────────────────
-async function handleAddSong(song) {
-  await addSongToPlaylist(playlist.value.id, song.id);
-}
-
-async function handleRemoveSong(songId) {
-  await removeSongFromPlaylist(playlist.value.id, songId);
-}
-
-function handleToggleLike(songId) {
-  toggleFavoriteSong(songId);
-}
+async function handleAddSong(song)      { await addSongToPlaylist(playlist.value.id, song.id); }
+async function handleRemoveSong(songId) { await removeSongFromPlaylist(playlist.value.id, songId); }
+function handleToggleLike(songId)       { toggleFavoriteSong(songId); }
 
 function playAll() {
   if (playableSongs.value.length === 0) return;
   playQueue(playlistSongs.value, 0, `Playlist: ${playlist.value.name}`);
-}
-
-function startRename() {
-  renameValue.value = playlist.value.name;
-  renaming.value = true;
-  nextTick(() => renameInput.value?.focus());
-}
-
-async function confirmRename() {
-  const name = renameValue.value.trim();
-  if (name && name !== playlist.value.name) {
-    await renamePlaylist(playlist.value.id, name);
-  }
-  renaming.value = false;
-}
-
-function cancelRename() {
-  renaming.value = false;
 }
 
 async function handleDelete() {
@@ -184,7 +126,6 @@ async function handleDelete() {
   router.push('/playlists');
 }
 
-// ── Lifecycle ─────────────────────────────────────────────────────────────────
 onMounted(async () => {
   await loadPlaylists();
   await loadSongs();
