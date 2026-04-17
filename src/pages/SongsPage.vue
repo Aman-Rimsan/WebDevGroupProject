@@ -61,6 +61,7 @@
             <tr>
               <th>ID</th><th>Title</th><th>Artist</th><th>Genre</th>
               <th>Duration</th><th>Year</th><th>Album</th>
+              <th class="has-text-right">Add to playlist</th>
               <th class="has-text-right">Remove</th>
             </tr>
           </thead>
@@ -74,11 +75,42 @@
               <td>{{ song.year }}</td>
               <td>{{ song.album }}</td>
               <td class="has-text-right">
+                <div class="dropdown is-right playlist-dropdown" :data-song-id="song.id">
+                  <div class="dropdown-trigger">
+                    <button class="button is-small is-light icon-btn" title="Add to playlist"
+                            @click.stop="toggleDropdown(song.id)">
+                      <SvgIcon name="plus" :size="13" />
+                    </button>
+                  </div>
+                  <div class="dropdown-menu" style="min-width:180px;">
+                    <div class="dropdown-content" style="background:var(--surface);border:1px solid var(--border);">
+                      <p v-if="playlists.length === 0" class="dropdown-item is-size-7" style="color:var(--muted);">
+                        No playlists yet.<br>
+                        <router-link to="/playlists">Create one →</router-link>
+                      </p>
+                      <a
+                        v-for="pl in playlists"
+                        :key="pl.id"
+                        class="dropdown-item"
+                        :class="{ 'has-text-success': pl.songIds.includes(String(song.id)) }"
+                        style="font-size:0.875rem;"
+                        @click.stop="handleAddToPlaylist(pl.id, song.id)"
+                      >
+                        <SvgIcon
+                          :name="pl.songIds.includes(String(song.id)) ? 'check' : 'playlist'"
+                          :size="13" style="margin-right:6px;vertical-align:middle;" />
+                        {{ pl.name }}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="has-text-right">
                 <RemoveButton title="Remove song" @click="removeSong(song.id)" />
               </td>
             </tr>
             <tr v-if="!loading && visibleSongs.length === 0">
-              <td colspan="8">
+              <td colspan="9">
                 <p class="has-text-centered py-5" style="color:var(--muted);">No songs matched your search.</p>
               </td>
             </tr>
@@ -173,6 +205,7 @@ import GenreBadges   from '../components/GenreBadges.vue';
 import D3BarChart    from '../components/D3BarChart.vue';
 
 import { addSong, deleteSong, fetchSongs } from '../api';
+import { playlists, loadPlaylists, addSongToPlaylist } from '../store/playlists.js';
 
 // ── State ─────────────────────────────────────────────────────────────────────
 const songs       = ref([]);
@@ -273,5 +306,29 @@ async function removeSong(songId) {
   }
 }
 
-onMounted(loadSongs);
+// ── Playlist dropdown ──────────────────────────────────────────────────────────
+function toggleDropdown(songId) {
+  // jQuery: close all others, toggle this one
+  const $all = $('.playlist-dropdown');
+  $all.not(`[data-song-id="${songId}"]`).removeClass('is-active');
+  $(`[data-song-id="${songId}"]`).toggleClass('is-active');
+}
+
+async function handleAddToPlaylist(playlistId, songId) {
+  await addSongToPlaylist(playlistId, String(songId));
+  // close dropdown after selecting
+  $('.playlist-dropdown').removeClass('is-active');
+}
+
+// Close dropdowns when clicking outside
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', () => {
+    $('.playlist-dropdown').removeClass('is-active');
+  });
+}
+
+onMounted(async () => {
+  await loadSongs();
+  await loadPlaylists();
+});
 </script>

@@ -35,7 +35,7 @@
         <div class="column">
           <div class="stat-card">
             <SvgIcon name="library"   :size="22" class="stat-icon" />
-            <span class="stat-value">{{ stats.playlists }}</span>
+            <span class="stat-value">{{ playlists.length }}</span>
             <span class="stat-label">Playlists</span>
           </div>
         </div>
@@ -165,19 +165,23 @@
                 <input v-model="playlistInput" class="input" type="text" placeholder="New playlist name" />
               </div>
               <div class="control">
-                <button class="button is-success" @click="addPlaylist">Add</button>
+                <button class="button is-success" @click="handleCreatePlaylist">Add</button>
               </div>
             </div>
 
             <div class="mt-3">
-              <div v-for="(playlist, index) in profile.playlists" :key="playlist + index"
-                   class="is-flex is-justify-content-space-between is-align-items-center py-2"
-                   style="border-bottom:1px solid var(--border);">
-                <span>{{ playlist }}</span>
-                <RemoveButton title="Remove playlist" @click="removePlaylist(index)" />
-              </div>
-              <p v-if="profile.playlists.length === 0" class="is-size-7 mt-2" style="color:var(--muted);">No playlists yet.</p>
+              <PlaylistCard
+                v-for="pl in playlists"
+                :key="pl.id"
+                :playlist="pl"
+                :songs="songs"
+                class="mb-3"
+              />
+              <p v-if="playlists.length === 0" class="is-size-7 mt-2" style="color:var(--muted);">No playlists yet.</p>
             </div>
+            <router-link to="/playlists" class="button is-light is-fullwidth mt-3" style="font-size:0.875rem;">
+              <SvgIcon name="queue" :size="13" class="mr-2" />Manage all playlists
+            </router-link>
           </div>
 
           <div class="box">
@@ -207,8 +211,10 @@ import SvgIcon       from '../components/SvgIcon.vue';
 import RemoveButton  from '../components/RemoveButton.vue';
 import GenreBadges   from '../components/GenreBadges.vue';
 import D3DonutChart  from '../components/D3DonutChart.vue';
+import PlaylistCard  from '../components/PlaylistCard.vue';
 
 import { fetchSongs, loadJSON, postJSON, saveJSON } from '../api';
+import { playlists, loadPlaylists, createPlaylist, deletePlaylist } from '../store/playlists.js';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const STORAGE_KEYS = { profile: 'spotifyClone.profile', settings: 'spotifyClone.settings' };
@@ -218,7 +224,7 @@ const DEFAULT_SETTINGS = {
 };
 
 // ── State ─────────────────────────────────────────────────────────────────────
-const profile  = reactive(loadJSON(STORAGE_KEYS.profile, { playlists: [], favoriteSongs: [], favoriteArtists: [] }));
+const profile  = reactive(loadJSON(STORAGE_KEYS.profile, { favoriteSongs: [], favoriteArtists: [] }));
 const settings = reactive(loadJSON(STORAGE_KEYS.settings, DEFAULT_SETTINGS));
 
 const songs     = ref([]);
@@ -248,7 +254,6 @@ const songOptions = computed(() =>
 const stats = computed(() => ({
   artists:   profile.favoriteArtists.length,
   songs:     profile.favoriteSongs.length,
-  playlists: profile.playlists.length,
 }));
 const favoriteSongRows = computed(() =>
   profile.favoriteSongs.map(entry => {
@@ -272,23 +277,20 @@ const donutData = computed(() => {
 // ── Persistence ───────────────────────────────────────────────────────────────
 function persistProfile() {
   const payload = {
-    playlists:        [...profile.playlists],
-    favoriteSongs:    [...profile.favoriteSongs],
-    favoriteArtists:  [...profile.favoriteArtists],
+    favoriteSongs:   [...profile.favoriteSongs],
+    favoriteArtists: [...profile.favoriteArtists],
   };
   saveJSON(STORAGE_KEYS.profile, payload);
   postJSON('/api/profile', payload).catch(() => {});
 }
 
 // ── Actions ───────────────────────────────────────────────────────────────────
-function addPlaylist() {
-  const value = playlistInput.value.trim();
-  if (!value || profile.playlists.includes(value)) return;
-  profile.playlists.push(value);
-  persistProfile();
+async function handleCreatePlaylist() {
+  const name = playlistInput.value.trim();
+  if (!name) return;
+  await createPlaylist(name);
   playlistInput.value = '';
 }
-function removePlaylist(index) { profile.playlists.splice(index, 1); persistProfile(); }
 
 function addFavoriteSong() {
   const dropdown = songSelect.value.trim();
@@ -321,6 +323,7 @@ onMounted(async () => {
   loadError.value = '';
   try {
     songs.value = await fetchSongs();
+    await loadPlaylists();
   } catch (err) {
     console.error('Failed to load songs from server', err);
     loadError.value = 'Could not load the song catalog.';

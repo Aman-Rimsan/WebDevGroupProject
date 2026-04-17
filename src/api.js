@@ -95,3 +95,63 @@ export function loadJSON(key, fallback) {
 export function saveJSON(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
+
+// ── Playlist API ──────────────────────────────────────────────────────────────
+
+/** Fetch all playlists from the server. */
+export function fetchPlaylists() {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: '/api/playlists',
+      method: 'GET',
+      dataType: 'json',
+      success: data => resolve(data),
+      error: (xhr, status, err) => reject(new Error(err || 'Failed to load playlists')),
+    });
+  });
+}
+
+/** Create a new playlist on the server. */
+export function apiCreatePlaylist(playlist) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: '/api/playlists',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(playlist),
+      dataType: 'json',
+      success: data => resolve(data),
+      error: (xhr, status, err) => reject(new Error(err || 'Failed to create playlist')),
+    });
+  });
+}
+
+/** Update an existing playlist on the server. */
+export function apiUpdatePlaylist(id, playlist) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `/api/playlists/${encodeURIComponent(id)}`,
+      method: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify(playlist),
+      dataType: 'json',
+      success: data => resolve(data),
+      error: (xhr, status, err) => reject(new Error(err || 'Failed to update playlist')),
+    });
+  });
+}
+
+/** Delete a playlist from the server. */
+export function apiDeletePlaylist(id) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `/api/playlists/${encodeURIComponent(id)}`,
+      method: 'DELETE',
+      success: () => resolve(),
+      error: xhr => {
+        if (xhr.status === 204 || xhr.status === 404) return resolve();
+        reject(new Error('Failed to delete playlist'));
+      },
+    });
+  });
+}

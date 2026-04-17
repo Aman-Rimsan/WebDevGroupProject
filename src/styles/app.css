@@ -325,3 +325,27 @@ textarea.textarea:focus {
 /* ── Misc helper ────────────────────────────────────────────────────── */
 a { color: inherit; }
 button, input, select, textarea { font: inherit; }
+
+/* ── Playlist dropdown (Songs page) ────────────────────────────────── */
+.dropdown-content {
+  background:    var(--surface);
+  border:        1px solid var(--border);
+  box-shadow:    var(--shadow);
+  border-radius: var(--radius-sm);
+}
+.dropdown-item {
+  color: var(--text);
+}
+.dropdown-item:hover {
+  background: var(--surface-2);
+  color:      var(--text);
+}
+.dropdown-item.has-text-success {
+  color: var(--accent) !important;
+}
+
+/* ── Playlist card (used in grid and profile sidebar) ──────────────── */
+.playlist-card {
+  cursor:     pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}

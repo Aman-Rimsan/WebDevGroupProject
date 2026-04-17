@@ -21,6 +21,9 @@
           <router-link class="navbar-item nav-chip" to="/profile">
             <SvgIcon name="person" :size="14" class="mr-1" />Profile
           </router-link>
+          <router-link class="navbar-item nav-chip" to="/playlists">
+            <SvgIcon name="queue" :size="14" class="mr-1" />Playlists
+          </router-link>
           <router-link class="navbar-item nav-chip" to="/songs">
             <SvgIcon name="music" :size="14" class="mr-1" />Songs
           </router-link>
